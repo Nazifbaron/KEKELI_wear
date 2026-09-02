@@ -216,15 +216,39 @@
 </head>
 
 <body class="antialiased selection:bg-mustard-gold selection:text-charcoal-luxe">
-    <?php $navItems = [
-        ['label' => 'Accueil', 'href' => '/'],
-        ['label' => 'Nos créations', 'href' => '/catalogue'],
-        ['label' => 'Boutique', 'href' => '#boutique'],
-        ['label' => 'Morphology Guide', 'href' => '#morphology-guide'],
-        ['label' => 'Reviews', 'href' => '#reviews'],
-    ]; ?>
+
     <!-- TopNavBar -->
-    <x-header :nav-items="$navItems" />
+    <header class="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-md shadow-[0_4px_20px_-5px_rgba(160,82,45,0.05)]">
+
+        <div class="max-w-[1280px] mx-auto px-margin-desktop flex justify-between items-center h-20">
+             <!-- Brand Logo (Center) -->
+            <a class="font-display-lg text-headline-lg tracking-tighter text-terracotta-earth absolute left-1/2 -translate-x-1/2" href="#">KEKELI</a>
+           
+            <!-- Navigation Links (Left) -->
+            <nav class="flex gap-gutter items-center">
+                <a class="font-label-caps text-label-caps text-on-surface hover:text-mustard-gold transition-colors duration-300" href="/">Accueil</a>
+                <a class="font-label-caps text-label-caps text-mustard-gold border-b-2 border-mustard-gold pb-1 transition-colors duration-300" href="/catalogue">Nos créations</a>
+                <a class="font-label-caps text-label-caps text-on-surface hover:text-mustard-gold transition-colors duration-300" href="#">Boutique</a>
+            </nav>
+            <!-- Navigation Links & Icons (Right) -->
+            <nav class="flex gap-gutter items-center">
+                <a class="font-label-caps text-label-caps text-on-surface hover:text-mustard-gold transition-colors duration-300" href="/client">Morphology Guide</a>
+                <a class="font-label-caps text-label-caps text-on-surface hover:text-mustard-gold transition-colors duration-300 mr-4" href="#">Reviews</a>
+                <div class="flex gap-4 items-center">
+                    <button class="text-primary hover:opacity-80 transition-opacity duration-200 cursor-pointer active:scale-95 transition-transform">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                    <button class="text-primary hover:opacity-80 transition-opacity duration-200 cursor-pointer active:scale-95 transition-transform">
+                        <span class="material-symbols-outlined">shopping_bag</span>
+                    </button>
+                    <button class="text-primary hover:opacity-80 transition-opacity duration-200 cursor-pointer active:scale-95 transition-transform">
+                        <span class="material-symbols-outlined">person</span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+
+    </header>
     <!-- Main Content -->
     <main class="pt-32 pb-section-gap relative">
         <!-- Background decorative element -->
@@ -294,7 +318,7 @@
                 <!-- Product Card 1 -->
                 <article class="group cursor-pointer">
                     <div class="relative overflow-hidden bg-ivory-light rounded-lg aspect-[3/4] mb-4">
-                        <img alt="Product Image" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="A model wearing a stunning mustard gold and deep forest green Afrofusion dress, minimalist high-end studio lighting, sophisticated and elegant posture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjTFkXs6yz6bfxheLdmbwNuoGe9WKSfx6kkAU3ydWKU1SynhqdT2jlE6EnKPU3uFUbbrV1ovAbaLT1VpyTa0w1fK2Uwrh7vzLA4b-OPgsOBjRDeyrqNNKoB0QsxvJojpQQi9RYa_3n3LXBpXR9IHAeCc8p6Yy-b0D5DDtiECpLKVi9UX0re9oP55I325Vfk8n1XwIPUGvMM8olslKM7Wj7vtPCYf2Ky0QBAE2rcxwh4dUhpSbxX_Wx9g" />
+                        <img alt="Product Image" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="A model wearing a stunning mustard gold and deep forest green Afrofusion dress, minimalist high-end studio lighting, sophisticated and elegant posture." src="{{ asset('images/product1.jpg') }}" />
                         <!-- Chips -->
                         <div class="absolute top-4 left-4 flex flex-col gap-2">
                             <span class="bg-forest-deep text-on-primary font-label-caps text-label-caps px-3 py-1 rounded-xl shadow-sm">ÉCO-RESPONSABLE</span>
@@ -302,7 +326,7 @@
                         </div>
                         <!-- Hover Action -->
                         <div class="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out glass-panel">
-                            <button class="w-full bg-mustard-gold text-charcoal-luxe font-label-caps text-label-caps py-3 rounded hover:opacity-90 transition-opacity">AJOUTER AU PANIER</button>
+                            <button class="w-full bg-mustard-gold text-charcoal-luxe font-label-caps text-label-caps py-3 rounded hover:opacity-90 transition-opacity">COMMANDER VIA WHATSAPP</button>
                         </div>
                     </div>
                     <div>
@@ -314,12 +338,12 @@
                 <!-- Product Card 2 -->
                 <article class="group cursor-pointer">
                     <div class="relative overflow-hidden bg-ivory-light rounded-lg aspect-[3/4] mb-4">
-                        <img alt="Product Image" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Close up of a tailored charcoal luxe blazer with subtle terracotta earth trim and West African motif embroidery on the lapel, premium studio lighting, showcasing texture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzyYf2DlJkYyGb8Lc_WezlUACNJyGCx4vgftITbyRo_xvDOINUMmuw_o2G1HNlJa4kTxDy7n4K86eRwI2atbNZUE_RR0bqlHNVgJIVyu06xttEqUWwF4cOXpQCHwrWq2zClo5QP1Am_RCSLR9Vs7kTtdRouAbf_HdxiPNbESyVidBWko5cbBVPMRtSNluzPhNOVFbRUv7AI2ZgwtZBeebJu6OByeWIRfB2b50uRcI_313_2pGXCRx9Rg" />
+                        <img alt="Product Image" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Close up of a tailored charcoal luxe blazer with subtle terracotta earth trim and West African motif embroidery on the lapel, premium studio lighting, showcasing texture." src="{{ asset('images/product2.jpg') }}" />
                         <div class="absolute top-4 left-4 flex flex-col gap-2">
                             <span class="bg-forest-deep text-on-primary font-label-caps text-label-caps px-3 py-1 rounded-xl shadow-sm">ÉCO-RESPONSABLE</span>
                         </div>
                         <div class="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out glass-panel">
-                            <button class="w-full bg-mustard-gold text-charcoal-luxe font-label-caps text-label-caps py-3 rounded hover:opacity-90 transition-opacity">AJOUTER AU PANIER</button>
+                            <button class="w-full bg-mustard-gold text-charcoal-luxe font-label-caps text-label-caps py-3 rounded hover:opacity-90 transition-opacity">COMMANDER VIA WHATSAPP</button>
                         </div>
                     </div>
                     <div>
@@ -331,12 +355,12 @@
                 <!-- Product Card 3 -->
                 <article class="group cursor-pointer">
                     <div class="relative overflow-hidden bg-ivory-light rounded-lg aspect-[3/4] mb-4">
-                        <img alt="Product Image" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Elegant flowing wide-leg trousers in an ivory light fabric, styled with a minimalist top, high fashion editorial photography, soft luminous lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4qOYGPtvtjV4H9JIQaky2nUBb8kNrGSudGvQctIgZHuUycPuUrP9e0RWuAu7vXeAGReaZGdew5d0hzfXP0U5LhbD3hX9-9BpDZ65XvFARdkyOmBMgUADtX1EKvgtU-SBKopqg1DXWq0jV1eP2bPV-LZTZfYlJeGABQI3H4Lf-Wy7Zvr2FYrvsAwBnM5maRKsSWScRVnvcjXdbJzjhRtFxwvMIMuGFcOABKurRrz4b5AdBueKA33kB0w" />
+                        <img alt="Product Image" class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" data-alt="Elegant flowing wide-leg trousers in an ivory light fabric, styled with a minimalist top, high fashion editorial photography, soft luminous lighting." src="{{ asset('images/product3.jpg') }}" />
                         <div class="absolute top-4 left-4 flex flex-col gap-2">
                             <span class="bg-terracotta-earth text-on-primary font-label-caps text-label-caps px-3 py-1 rounded-xl shadow-sm w-fit">FAIT MAIN</span>
                         </div>
                         <div class="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out glass-panel">
-                            <button class="w-full bg-mustard-gold text-charcoal-luxe font-label-caps text-label-caps py-3 rounded hover:opacity-90 transition-opacity">AJOUTER AU PANIER</button>
+                            <button class="w-full bg-mustard-gold text-charcoal-luxe font-label-caps text-label-caps py-3 rounded hover:opacity-90 transition-opacity">COMMANDER VIA WHATSAPP</button>
                         </div>
                     </div>
                     <div>
@@ -389,7 +413,7 @@
             <!-- Brand & Copyright -->
             <div class="md:col-span-1 flex flex-col gap-4">
                 <span class="font-display-lg text-headline-lg text-mustard-gold">KEKELI</span>
-                <p class="font-body-md text-body-md text-ivory-light">© 2024 KEKELI WEAR. ELEGANCE IN EVERY THREAD.</p>
+                <p class="font-body-md text-body-md text-ivory-light">© 2026 KEKELI WEAR. L'ÉLÉGANCE DANS CHAQUE FIL.</p>
             </div>
             <!-- Links Column 1 -->
             <div class="flex flex-col gap-3">
