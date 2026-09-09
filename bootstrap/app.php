@@ -11,7 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        /*
+        |----------------------------------------------------------
+        | Alias du middleware admin
+        | Utilisé via ->middleware('admin') dans les routes
+        |----------------------------------------------------------
+        */
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
