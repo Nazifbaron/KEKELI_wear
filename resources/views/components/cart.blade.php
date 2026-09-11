@@ -29,12 +29,14 @@
 
     {{-- Boutons d'action --}}
     <div id="cart-actions" style="display:none">
-        {{-- Paiement en ligne --}}
-        <button class="btn-checkout" onclick="goToCheckout()">
+        {{-- Paiement en ligne → page checkout --}}
+        <button class="btn-checkout"
+                onclick="window.location.href='/checkout/summary'">
             💳 Passer la commande
         </button>
-        {{-- Alternative WhatsApp --}}
-        <button class="btn-checkout btn-checkout-wa" onclick="checkoutWhatsApp()">
+        {{-- Alternative WhatsApp directe --}}
+        <button class="btn-checkout btn-checkout-wa"
+                onclick="checkoutWhatsApp()">
             📱 Finaliser sur WhatsApp
         </button>
     </div>

@@ -107,7 +107,7 @@
                     </div>
                 @endif
 
-                <div class="form-admin-group">
+                <div class="form-admin-group" style="margin-top:6px">
                     <label class="form-admin-label">Tag (étiquette) *</label>
                     <input class="form-admin-input" type="text" name="tag"
                            placeholder="Ex: Collection 2026"

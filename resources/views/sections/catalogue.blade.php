@@ -24,40 +24,40 @@
         <div class="universes">
             @foreach($categories as $index => $cat)
             <div class="univ-card {{ $index === 0 ? 'active' : '' }}"
-                 id="ucard-{{ $cat->slug }}"
-                 onclick="filterByCategory('{{ $cat->slug }}')">
+                id="ucard-{{ $cat->slug }}"
+                onclick="filterByCategory('{{ $cat->slug }}')">
 
                 {{-- Image de fond si disponible — sinon dégradé CSS --}}
                 @if($cat->image)
-                    <div class="univ-card-bg"
-                         style="background-image:url('{{ asset('storage/' . $cat->image) }}')">
-                    </div>
-                    {{-- Overlay sombre pour lisibilité du texte --}}
-                    <div class="univ-card-overlay"></div>
+                <div class="univ-card-bg"
+                    style="background-image:url('{{ asset('storage/' . $cat->image) }}')">
+                </div>
+                {{-- Overlay sombre pour lisibilité du texte --}}
+                <div class="univ-card-overlay"></div>
                 @endif
 
                 {{-- Contenu de la carte (au-dessus de l'image) --}}
                 <div class="univ-card-content">
-
                     {{-- Icône --}}
                     <div class="univ-icon">{{ $cat->icon }}</div>
-
-                    {{-- Nom --}}
-                    <div class="univ-name">{{ $cat->name }}</div>
-
-                    {{-- Description --}}
-                    <div class="univ-desc">{{ $cat->description }}</div>
-
-                    {{-- Compteur produits — mis à jour par /api/stats toutes les 60s --}}
-                    <div class="univ-counter">
-                        <span id="cnt-{{ $cat->slug }}">{{ $cat->product_count }}</span>
-                        @if($cat->slug === 'accessoires')
+                    {{-- Contenu en bas --}}
+                    <div class="univ-card-bottom">
+                        {{-- Nom --}}
+                        <div class="univ-name">{{ $cat->name }}</div>
+                        {{-- Description --}}
+                        <div class="univ-desc">{{ $cat->description }}</div>
+                        {{-- Compteur --}}
+                        <div class="univ-counter">
+                            <span id="cnt-{{ $cat->slug }}">{{ $cat->product_count }}</span>
+                            @if($cat->slug === 'accessoires')
                             pièces
-                        @elseif($cat->slug === 'surmesure')
+                            @elseif($cat->slug === 'surmesure')
                             modèles
-                        @else
+                            @else
                             créations
-                        @endif
+                            @endif
+                        </div>
+
                     </div>
 
                 </div>

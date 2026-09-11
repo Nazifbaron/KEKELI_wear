@@ -24,6 +24,9 @@ Route::prefix('api')->name('api.')->group(function () {
 
     Route::get ('stats',                  [ApiController::class, 'stats'])->name('stats');
 
+    // Détail commande pour checkout/payment et checkout/confirmation
+    Route::get ('order/{ref}',            [ApiController::class, 'getOrder'])->name('order.get');
+
     // Produits — likes et vues sans connexion (via session_id)
     Route::post('products/{id}/like',     [ApiController::class, 'toggleLike'])->name('products.like');
     Route::post('products/{id}/view',     [ApiController::class, 'trackView'])->name('products.view');
@@ -55,11 +58,32 @@ Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store'
 |--------------------------------------------------------------------------
 */
 Route::prefix('checkout')->name('checkout.')->group(function () {
-    Route::get ('summary',                   [CheckoutController::class, 'summary'])->name('summary');
-    Route::post('/',                         [CheckoutController::class, 'store'])->name('store');
-    Route::get ('payment/{ref}',             fn($ref) => view('checkout.payment', compact('ref')))->name('payment.gateway');
-    Route::post('payment/{ref}/callback',    [CheckoutController::class, 'paymentCallback'])->name('payment.callback');
-    Route::get ('confirmation/{ref}',        fn($ref) => view('checkout.confirmation', compact('ref')))->name('confirmation');
+
+    /*
+    | Étape 1 — Récapitulatif panier + infos client
+    | GET  → afficher la vue summary
+    | POST → créer la commande en BD
+    */
+    Route::get ('summary',                    [CheckoutController::class, 'summary'])->name('summary');
+    Route::post('/',                          [CheckoutController::class, 'store'])->name('store');
+
+    /*
+    | Étape 2 — Page de paiement FedaPay
+    | Le widget JS FedaPay est chargé sur cette page
+    */
+    Route::get ('payment/{ref}',              [CheckoutController::class, 'paymentPage'])->name('payment.gateway');
+
+    /*
+    | Callback paiement — appelé par le widget JS FedaPay
+    | après succès ou échec du paiement
+    */
+    Route::post('payment/{ref}/callback',     [CheckoutController::class, 'paymentCallback'])->name('payment.callback');
+
+    /*
+    | Étape 3 — Page de confirmation
+    | Affichée après paiement réussi ou commande WhatsApp
+    */
+    Route::get ('confirmation/{ref}',         [CheckoutController::class, 'confirmation'])->name('confirmation');
 });
 
 /*

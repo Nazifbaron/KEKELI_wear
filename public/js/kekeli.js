@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
    window.TOTAL_SLIDES = {{ $slides->count() ?? 3 }}
 ============================================================ */
 var currentSlide = 0;
-var totalSlides  = window.TOTAL_SLIDES || 3;
+var totalSlides  = window.TOTAL_SLIDES || document.querySelectorAll('.slide').length || 3;
 var slideTimer;
 
 function goSlide(n) {

@@ -11,8 +11,8 @@
 
     {{-- Liste codes --}}
     <div style="flex:2;min-width:300px">
-        <div class="admin-card">
-            <table class="admin-table">
+        <div class="admin-card" >
+            <table class="admin-table" >
                 <thead>
                     <tr>
                         <th>Code</th>

@@ -1,17 +1,60 @@
 {{-- ============================================================
      sections/hero.blade.php
-     Carrousel hero — 2 sources possibles :
-     1. Slides BD (configurées par l'admin → hero_slides table)
-     2. Fallback 3 slides codées en dur si BD vide
+    Carrousel hero — les slides BD remplacent leur position;
+    les positions sans slide BD utilisent les 3 slides manuelles.
      Le JS (kekeli.js) gère auto-play 5s, dots, flèches.
 ============================================================ --}}
 <section id="hero" style="padding:0">
 
-    {{-- ========== CAS 1 : Slides depuis la BD ========== --}}
-    @if($slides->isNotEmpty())
+    @php
+        // Chaque slide admin occupe sa position d'ordre; les positions vides utilisent le fallback.
+        $slidesByPosition = $slides->keyBy(fn($slide) => max(0, (int) $slide->order - 1));
+        $lastAdminPosition = $slidesByPosition->keys()->max() ?? -1;
+        $slideCount = max(3, $lastAdminPosition + 1);
+        $manualSlides = [
+            [
+                'tag' => 'Collection 2026',
+                'title' => 'Une lumière pour',
+                'highlight' => 'la mode au féminin.',
+                'subtitle' => 'Créations afrofusion uniques — Mode écoresponsable, imaginée à Cotonou, au Bénin.',
+                'image' => 'hero-1.jpg',
+                'overlay' => '',
+                'primary_label' => 'Découvrir nos créations',
+                'primary_url' => '#catalogue',
+                'secondary_label' => 'Commander sur WhatsApp',
+                'secondary_url' => 'https://wa.me/' . config('kekeli.whatsapp'),
+            ],
+            [
+                'tag' => 'Tenues Réinventées',
+                'title' => "L'upcycling",
+                'highlight' => 'réinventé.',
+                'subtitle' => "Pièces écoresponsables et uniques. Chaque création raconte une histoire, porte un héritage, révèle votre éclat intérieur.",
+                'image' => 'hero-2.jpg',
+                'overlay' => 'linear-gradient(135deg,rgba(0,0,0,.75),rgba(24,65,131,.3) 60%,transparent)',
+                'primary_label' => 'Voir la collection',
+                'primary_url' => '#shop',
+                'secondary_label' => null,
+                'secondary_url' => null,
+            ],
+            [
+                'tag' => 'Sur-Mesure Exclusif',
+                'title' => 'Votre morphologie,',
+                'highlight' => 'notre art.',
+                'subtitle' => 'Un vêtement créé pour vous, selon vos mesures exactes. Renseignez votre profil morphologique et laissez-nous révéler votre éclat.',
+                'image' => 'hero-3.jpg',
+                'overlay' => 'linear-gradient(135deg,rgba(0,0,0,.75),rgba(58,38,101,.35) 60%,transparent)',
+                'primary_label' => 'Découvrir mon profil',
+                'primary_url' => '#morphology',
+                'secondary_label' => null,
+                'secondary_url' => null,
+            ],
+        ];
+    @endphp
 
-        @foreach($slides as $index => $slide)
-        <div class="slide {{ $index > 0 ? 'hidden' : '' }}" id="slide-{{ $index }}">
+    @for($index = 0; $index < $slideCount; $index++)
+        @if($slidesByPosition->has($index))
+            @php $slide = $slidesByPosition->get($index); @endphp
+            <div class="slide {{ $index > 0 ? 'hidden' : '' }}" id="slide-{{ $index }}">
 
               {{-- Image BD si fournie, sinon image locale correspondante --}}
             <div class="slide-bg"
@@ -51,98 +94,38 @@
                 </div>
             </div>
         </div>
-        @endforeach
-
-    {{-- ========== CAS 2 : Fallback si aucun slide en BD ========== --}}
-    @else
-
-        {{-- Slide 1 — Accueil général --}}
-        <div class="slide" id="slide-0">
-            <div class="slide-bg"
-                 style="background-image:url('{{ asset('images/hero/hero-1.jpg') }}');
-                        background-color:#2a1010">
-            </div>
-            <div class="slide-overlay"></div>
-            <div class="slide-content">
-                <div class="slide-tag">Collection 2026</div>
-                <div class="slide-title">
-                    Une lumière pour<br>
-                    <span>la mode au féminin.</span>
+        @else
+            @php $manual = $manualSlides[$index] ?? $manualSlides[0]; @endphp
+            <div class="slide {{ $index > 0 ? 'hidden' : '' }}" id="slide-{{ $index }}">
+                <div class="slide-bg"
+                     style="background-image:url('{{ asset('images/hero/' . $manual['image']) }}');background-color:#2a1010">
                 </div>
-                <div class="slide-sub">
-                    Créations afrofusion uniques — Mode écoresponsable,
-                    imaginée à Cotonou, au Bénin.
-                </div>
-                <div class="hero-btns">
-                    <a class="btn-gold" href="#catalogue">Découvrir nos créations</a>
-                    <a class="btn-outline"
-                       href="https://wa.me/{{ config('kekeli.whatsapp') }}"
-                       target="_blank">Commander sur WhatsApp</a>
+                <div class="slide-overlay" @if($manual['overlay']) style="background:{{ $manual['overlay'] }}" @endif></div>
+                <div class="slide-content">
+                    <div class="slide-tag">{{ $manual['tag'] }}</div>
+                    <div class="slide-title">
+                        {{ $manual['title'] }}<br>
+                        <span>{{ $manual['highlight'] }}</span>
+                    </div>
+                    <div class="slide-sub">{{ $manual['subtitle'] }}</div>
+                    <div class="hero-btns">
+                        <a class="btn-gold" href="{{ $manual['primary_url'] }}"
+                           @if($index === 1) onclick="filterByCategory('reinventees')" @endif>
+                            {{ $manual['primary_label'] }}
+                        </a>
+                        @if($manual['secondary_label'])
+                            <a class="btn-outline" href="{{ $manual['secondary_url'] }}" target="_blank">
+                                {{ $manual['secondary_label'] }}
+                            </a>
+                        @endif
+                    </div>
                 </div>
             </div>
-        </div>
-
-        {{-- Slide 2 — Tenues Réinventées --}}
-        <div class="slide hidden" id="slide-1">
-            <div class="slide-bg"
-                 style="background-image:url('{{ asset('images/hero/hero-2.jpg') }}');
-                        background-color:#0a1020">
-            </div>
-            <div class="slide-overlay"
-                 style="background:linear-gradient(135deg,rgba(0,0,0,.75),rgba(24,65,131,.3) 60%,transparent)">
-            </div>
-            <div class="slide-content">
-                <div class="slide-tag">Tenues Réinventées</div>
-                <div class="slide-title">
-                    L'upcycling<br>
-                    <span>réinventé.</span>
-                </div>
-                <div class="slide-sub">
-                    Pièces écoresponsables et uniques. Chaque création raconte
-                    une histoire, porte un héritage, révèle votre éclat intérieur.
-                </div>
-                <div class="hero-btns">
-                    <a class="btn-gold"
-                       href="#shop"
-                       onclick="filterByCategory('reinventees')">Voir la collection</a>
-                </div>
-            </div>
-        </div>
-
-        {{-- Slide 3 — Sur-Mesure --}}
-        <div class="slide hidden" id="slide-2">
-            <div class="slide-bg"
-                 style="background-image:url('{{ asset('images/hero/hero-3.jpg') }}');
-                        background-color:#1a0a1a">
-            </div>
-            <div class="slide-overlay"
-                 style="background:linear-gradient(135deg,rgba(0,0,0,.75),rgba(58,38,101,.35) 60%,transparent)">
-            </div>
-            <div class="slide-content">
-                <div class="slide-tag">Sur-Mesure Exclusif</div>
-                <div class="slide-title">
-                    Votre morphologie,<br>
-                    <span>notre art.</span>
-                </div>
-                <div class="slide-sub">
-                    Un vêtement créé pour vous, selon vos mesures exactes.
-                    Renseignez votre profil morphologique et laissez-nous révéler votre éclat.
-                </div>
-                <div class="hero-btns">
-                    <a class="btn-gold" href="#morphology">Découvrir mon profil</a>
-                </div>
-            </div>
-        </div>
-        
-
-    @endif
+        @endif
+    @endfor
 
     {{-- ========== Dots de navigation ========== --}}
     <div class="carousel-dots" id="carousel-dots">
-        @php
-            // Nombre de dots = nombre de slides (BD ou fallback)
-            $slideCount = $slides->isNotEmpty() ? $slides->count() : 3;
-        @endphp
         @for($i = 0; $i < $slideCount; $i++)
             <button class="cdot {{ $i === 0 ? 'active' : '' }}"
                     onclick="goSlide({{ $i }})"
@@ -169,6 +152,6 @@
 @push('scripts')
 <script>
     {{-- Nombre de slides dynamique selon la source (BD ou fallback) --}}
-    window.TOTAL_SLIDES = {{ $slides->isNotEmpty() ? $slides->count() : 3 }};
+    window.TOTAL_SLIDES = {{ $slideCount }};
 </script>
 @endpush

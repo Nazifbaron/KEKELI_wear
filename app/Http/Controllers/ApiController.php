@@ -16,6 +16,39 @@ class ApiController extends Controller
 {
     /*
     |----------------------------------------------------------
+    | GET ORDER — détails d'une commande pour les pages
+    | checkout/payment et checkout/confirmation
+    |----------------------------------------------------------
+    */
+    public function getOrder(string $ref): JsonResponse
+    {
+        $order = \App\Models\Order::where('reference', $ref)
+                                  ->with('items')
+                                  ->firstOrFail();
+
+        return response()->json([
+            'reference'      => $order->reference,
+            'customer_name'  => $order->customer_name,
+            'customer_phone' => $order->customer_phone,
+            'customer_email' => $order->customer_email,
+            'delivery_city'  => $order->delivery_city,
+            'payment_method' => $order->payment_method,
+            'payment_status' => $order->payment_status,
+            'status'         => $order->status,
+            'subtotal'       => $order->subtotal,
+            'discount'       => $order->discount_amount,
+            'total'          => $order->total,
+            'items'          => $order->items->map(fn($i) => [
+                'name'     => $i->product_name,
+                'qty'      => $i->quantity,
+                'price'    => $i->unit_price,
+                'subtotal' => $i->subtotal,
+            ]),
+        ]);
+    }
+
+    /*
+    |----------------------------------------------------------
     | STATS GLOBALES
     | Appelée au chargement + toutes les 60s via setInterval
     | Pour mettre à jour la barre stats et les compteurs

@@ -77,6 +77,10 @@
         <div class="products-grid" id="products-grid">
 
             @forelse($products as $product)
+            @php
+                $isCustomProduct = $product->is_custom
+                    || $product->category->slug === 'surmesure';
+            @endphp
             <div class="prod-card"
                  data-cat="{{ $product->category->slug }}"
                  data-id="{{ $product->id }}">
@@ -118,7 +122,7 @@
 
                     {{-- Overlay au hover --}}
                     <div class="prod-overlay">
-                        @if($product->is_custom)
+                        @if($isCustomProduct)
                             {{-- Sur-mesure → rediriger vers mensurations --}}
                             <button class="btn-wa"
                                     onclick="smoothScrollTo('morphology')">
@@ -157,7 +161,7 @@
                             @endif
                         </div>
 
-                        @if($product->is_custom)
+                        @if($isCustomProduct)
                             {{-- Sur-mesure → bouton mesures --}}
                             <button class="btn-add-cart"
                                     onclick="smoothScrollTo('morphology')">

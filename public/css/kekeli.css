@@ -315,6 +315,9 @@ nav {
     padding: 24px 18px; height: 100%;
     display: flex; flex-direction: column;
 }
+.univ-card-bottom {
+    margin-top: auto;
+}
 /* Fallback quand pas d'image de fond */
 .univ-card:not(:has(.univ-card-bg)) .univ-card-content { background: rgba(255,255,255,.02); }
 
@@ -328,7 +331,7 @@ nav {
 .univ-card:nth-child(4) .univ-icon { background: rgba(58,38,101,.25);  color: #a98fff; }
 
 .univ-name    { font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #fff; }
-.univ-desc    { font-size: 11px; color: rgba(255,255,255,.75); line-height: 1.5; margin-bottom: 10px; flex: 1; }
+.univ-desc    { font-size: 11px; color: rgba(255,255,255,.75); line-height: 1.5; margin-bottom: 10px;  }
 .univ-counter { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 .univ-card:nth-child(1) .univ-counter { color: var(--kred); }
 .univ-card:nth-child(2) .univ-counter { color: var(--kgold); }
@@ -700,6 +703,8 @@ footer { background: #000; border-top: 1px solid rgba(255,255,255,.07); padding:
 .cart-total  { font-size: 13px; font-weight: 700; color: var(--kgold); text-align: right; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,.1); }
 .cart-empty  { font-size: 12px; color: var(--kgray); text-align: center; padding: 16px 0; }
 #cart-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+#cart-actions { margin-top: 12px; }
+#cart-actions .btn-checkout + .btn-checkout {  margin-top: 16px;}
 .btn-checkout {
     width: 100%; background: var(--kred); color: #fff; border: none;
     padding: 11px; font-size: 11px; font-weight: 700;
