@@ -12,7 +12,7 @@
 </button>
 
 {{-- Modal panier --}}
-<div class="cart-modal" id="cart-modal">
+<div class="cart-modal" id="cart-modal" >
 
     <div class="cart-modal-title">
         Mon panier
@@ -28,12 +28,13 @@
     <div class="cart-total" id="cart-total" style="display:none"></div>
 
     {{-- Boutons d'action --}}
-    <div id="cart-actions" style="display:none">
+    <div id="cart-actions" style="display:none;">
         {{-- Paiement en ligne → page checkout --}}
         <button class="btn-checkout"
                 onclick="window.location.href='/checkout/summary'">
             💳 Passer la commande
         </button>
+        {{-- Paiement en ligne → page checkout --}}
         {{-- Alternative WhatsApp directe --}}
         <button class="btn-checkout btn-checkout-wa"
                 onclick="checkoutWhatsApp()">

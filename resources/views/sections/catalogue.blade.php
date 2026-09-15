@@ -23,32 +23,135 @@
         {{-- ===== 4 CARTES UNIVERS depuis la BD ===== --}}
         <div class="universes">
             @foreach($categories as $index => $cat)
-            <div class="univ-card {{ $index === 0 ? 'active' : '' }}"
+            {{-- TENUES RÉINVENTÉES --}}
+            @if($index === 0)
+            <div class="univ-card univ-card-main {{ $index === 0 ? 'active' : '' }}"
                 id="ucard-{{ $cat->slug }}"
                 onclick="filterByCategory('{{ $cat->slug }}')">
-
-                {{-- Image de fond si disponible — sinon dégradé CSS --}}
                 @if($cat->image)
                 <div class="univ-card-bg"
                     style="background-image:url('{{ asset('storage/' . $cat->image) }}')">
                 </div>
-                {{-- Overlay sombre pour lisibilité du texte --}}
+                <div class="univ-card-overlay"></div>
+                @endif
+                <div class="univ-card-content">
+                    <div class="univ-icon">
+                        {{ $cat->icon }}
+                    </div>
+                    <div class="univ-card-bottom">
+                        <div class="univ-name">
+                            {{ $cat->name }}
+                        </div>
+                        <div class="univ-desc">
+                            {{ $cat->description }}
+                        </div>
+                        <div class="univ-counter">
+                            <span id="cnt-{{ $cat->slug }}">
+                                {{ $cat->product_count }}
+                            </span>
+                            @if($cat->slug === 'accessoires')
+                            pièces
+                            @elseif($cat->slug === 'surmesure')
+                            modèles
+                            @else
+                            créations
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Ouverture de la colonne droite --}}
+            <div class="univ-card-column">
+
+                {{-- CONFECTIONS + SUR-MESURE --}}
+                @elseif($index === 1 || $index === 2)
+
+                <div class="univ-card {{ $index === 1 ? '' : '' }}"
+                    id="ucard-{{ $cat->slug }}"
+                    onclick="filterByCategory('{{ $cat->slug }}')">
+
+                    @if($cat->image)
+                    <div class="univ-card-bg"
+                        style="background-image:url('{{ asset('storage/' . $cat->image) }}')">
+                    </div>
+                    <div class="univ-card-overlay"></div>
+                    @endif
+
+                    <div class="univ-card-content">
+
+                        <div class="univ-icon">
+                            {{ $cat->icon }}
+                        </div>
+
+                        <div class="univ-card-bottom">
+
+                            <div class="univ-name">
+                                {{ $cat->name }}
+                            </div>
+
+                            <div class="univ-desc">
+                                {{ $cat->description }}
+                            </div>
+
+                            <div class="univ-counter">
+                                <span id="cnt-{{ $cat->slug }}">
+                                    {{ $cat->product_count }}
+                                </span>
+
+                                @if($cat->slug === 'accessoires')
+                                pièces
+                                @elseif($cat->slug === 'surmesure')
+                                modèles
+                                @else
+                                créations
+                                @endif
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Fermeture de la colonne droite --}}
+                @if($index === 2)
+            </div>
+            @endif
+
+            {{-- ACCESSOIRES --}}
+            @elseif($index === 3)
+
+            <div class="univ-card univ-card-accessories"
+                id="ucard-{{ $cat->slug }}"
+                onclick="filterByCategory('{{ $cat->slug }}')">
+
+                @if($cat->image)
+                <div class="univ-card-bg"
+                    style="background-image:url('{{ asset('storage/' . $cat->image) }}')">
+                </div>
                 <div class="univ-card-overlay"></div>
                 @endif
 
-                {{-- Contenu de la carte (au-dessus de l'image) --}}
                 <div class="univ-card-content">
-                    {{-- Icône --}}
-                    <div class="univ-icon">{{ $cat->icon }}</div>
-                    {{-- Contenu en bas --}}
+
+                    <div class="univ-icon">
+                        {{ $cat->icon }}
+                    </div>
+
                     <div class="univ-card-bottom">
-                        {{-- Nom --}}
-                        <div class="univ-name">{{ $cat->name }}</div>
-                        {{-- Description --}}
-                        <div class="univ-desc">{{ $cat->description }}</div>
-                        {{-- Compteur --}}
+
+                        <div class="univ-name">
+                            {{ $cat->name }}
+                        </div>
+
+                        <div class="univ-desc">
+                            {{ $cat->description }}
+                        </div>
+
                         <div class="univ-counter">
-                            <span id="cnt-{{ $cat->slug }}">{{ $cat->product_count }}</span>
+                            <span id="cnt-{{ $cat->slug }}">
+                                {{ $cat->product_count }}
+                            </span>
+
                             @if($cat->slug === 'accessoires')
                             pièces
                             @elseif($cat->slug === 'surmesure')
@@ -59,13 +162,16 @@
                         </div>
 
                     </div>
-
                 </div>
-
             </div>
+
+            @endif
+
             @endforeach
 
-        </div>{{-- /universes --}}
+        </div>
+
+
 
         {{-- ===== NOTE SUR-MESURE ===== --}}
         {{-- Affichée quand l'admin a des produits sur-mesure --}}

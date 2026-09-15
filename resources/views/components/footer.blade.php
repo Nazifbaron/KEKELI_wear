@@ -9,9 +9,9 @@
             {{-- Colonne 1 : Marque --}}
             <div>
                 <div class="foot-brand">
-                    <img src="{{ asset('images/logo.png') }}"
+                    <img src="{{ asset('images/logo1.png') }}"
                          alt="KEKELI WEAR"
-                         style="height:36px;width:auto;filter:brightness(0) invert(1)" />
+                         style="height:56px;width:auto;filter:brightness(0) invert(1)" />
                 </div>
                 <p class="foot-tagline">
                     Une lumière pour la mode au féminin.<br>
@@ -55,19 +55,19 @@
         </div>
 
         {{-- Pied de footer --}}
-        <div class="foot-bottom">
+        <div class="foot-bottom" style="display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px">
             <div class="foot-copy">
                 © {{ date('Y') }} KEKELI WEAR — L'ÉLÉGANCE DANS CHAQUE FIL.
                 Réalisé par <strong>ACCES UNIVERSEL SARL</strong>.
             </div>
-            <div class="foot-social">
+           {{-- <div class="foot-social">
                 <a href="https://facebook.com/kekeliwear229"
                    target="_blank" rel="noopener" title="Facebook">f</a>
                 <a href="https://wa.me/{{ config('kekeli.whatsapp') }}"
                    target="_blank" rel="noopener" title="WhatsApp">W</a>
                 <a href="https://tiktok.com/@kekeliwear229"
                    target="_blank" rel="noopener" title="TikTok">T</a>
-            </div>
+            </div>--}}
         </div>
     </div>
 </footer>

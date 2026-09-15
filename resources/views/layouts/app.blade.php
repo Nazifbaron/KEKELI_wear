@@ -18,8 +18,8 @@
     {{-- ===== NAVIGATION FIXE ===== --}}
     @include('components.navbar')
 
-    {{-- ===== BARRE STATS (sous la nav) ===== --}}
-    @include('components.stats-bar')
+    {{-- ===== BARRE STATS (sous la nav) =====
+    @include('components.stats-bar')--}}
 
     {{-- ===== CONTENU PRINCIPAL ===== --}}
     <main>

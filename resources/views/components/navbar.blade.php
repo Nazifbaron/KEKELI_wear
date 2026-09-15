@@ -1,53 +1,65 @@
 {{-- ============================================================
      components/navbar.blade.php
-     Navigation fixe avec ancres, réseaux sociaux, menu mobile.
-     La classe .active est gérée par le scroll spy dans kekeli.js
+     Top bar réseaux sociaux (disparaît au scroll)
+     + Nav transparente qui devient blanche au scroll
 ============================================================ --}}
+
+{{-- TOP BAR — réseaux sociaux, non fixe --}}
+<div id="top-bar">
+    <div class="top-bar-msg">
+        Livraison dans tout le Bénin &amp; à l'international ✦
+        <strong>Commandez sur WhatsApp</strong>
+    </div>
+    <div class="top-bar-social">
+        <a href="https://facebook.com/kekeliwear229"
+           target="_blank" rel="noopener" title="Facebook">f</a>
+        <a href="https://wa.me/{{ config('kekeli.whatsapp') }}"
+           target="_blank" rel="noopener" title="WhatsApp">W</a>
+        <a href="https://tiktok.com/@kekeliwear229"
+           target="_blank" rel="noopener" title="TikTok">T</a>
+    </div>
+</div>
+
+{{-- NAV PRINCIPALE --}}
 <nav id="main-nav">
     <div class="nav-inner">
 
-        {{-- Logo — image réelle depuis public/images/logo.png --}}
+        {{-- Logo --}}
         <a class="nav-logo" href="#hero">
-            <img src="{{ asset('images/logo.png') }}"
+            <img src="{{ asset('images/logo1.png') }}"
                  alt="KEKELI WEAR"
-                 style="height:38px;width:auto;display:block" />
+                 style="height:56px;width:auto" />
         </a>
 
-        {{-- Liens de navigation — ancres vers les sections --}}
+        {{-- Liens desktop --}}
         <div class="nav-links">
             <a href="#hero"        class="nav-link active">Accueil</a>
-            <a href="#about"       class="nav-link">À propos</a>
-            <a href="#catalogue"   class="nav-link">Nos créations</a>
+            <a href="#advantages"   class="nav-link">Avantages</a>
+            <a href="#catalogue"   class="nav-link">Collections</a>
             <a href="#featured"    class="nav-link">Tendances</a>
             <a href="#shop"        class="nav-link">Boutique</a>
-            <a href="#morphology"  class="nav-link">Espace Client</a>
+            <a href="#morphology"  class="nav-link">Mon profil</a>
             <a href="#reviews"     class="nav-link">Avis</a>
             <a href="#contact"     class="nav-link">Contact</a>
-        </div>
-
-        {{-- Réseaux sociaux --}}
-        <div class="nav-social">
-            <a href="https://facebook.com/kekeliwear229"
-               target="_blank" rel="noopener" title="Facebook">f</a>
-            <a href="https://wa.me/{{ config('kekeli.whatsapp') }}"
-               target="_blank" rel="noopener" title="WhatsApp">W</a>
-            <a href="https://tiktok.com/@kekeliwear229"
-               target="_blank" rel="noopener" title="TikTok">T</a>
+            <a href="#about"       class="nav-link">À propos</a>
         </div>
 
         {{-- Bouton menu mobile --}}
         <button class="nav-toggle" id="nav-toggle" aria-label="Ouvrir le menu">☰</button>
+
     </div>
 </nav>
 
-{{-- Menu déroulant mobile --}}
+{{-- Menu mobile plein écran --}}
 <div class="mobile-menu" id="mobile-menu">
-    <a href="#hero">Accueil</a>
-    <a href="#about">À propos</a>
-    <a href="#catalogue">Collections</a>
-    <a href="#featured">Tendances</a>
-    <a href="#shop">Boutique</a>
-    <a href="#morphology">Espace Client</a>
-    <a href="#reviews">Avis</a>
-    <a href="#contact">Contact</a>
+    <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer">✕</button>
+    <a href="#hero"       onclick="closeMobileMenu()">Accueil</a>
+    <a href="#advantages"  onclick="closeMobileMenu()">Avantages</a>
+    <a href="#catalogue"  onclick="closeMobileMenu()">Collections</a>
+    <a href="#featured"   onclick="closeMobileMenu()">Tendances</a>
+    <a href="#shop"       onclick="closeMobileMenu()">Boutique</a>
+    <a href="#morphology" onclick="closeMobileMenu()">Mon profil</a>
+    <a href="#reviews"    onclick="closeMobileMenu()">Avis</a>
+    <a href="#contact"    onclick="closeMobileMenu()">Contact</a>
+    <a href="#about"      onclick="closeMobileMenu()">À propos</a>
 </div>

@@ -27,10 +27,8 @@
         {{-- Carrousel --}}
         <div class="fav-wrapper">
             <div class="fav-track" id="fav-track">
-
                 @forelse($featured as $product)
                 <div class="fav-card">
-
                     {{-- Image produit --}}
                     <div class="fav-img"
                          style="{{ !$product->main_image

@@ -8,15 +8,15 @@
     <div class="container">
 
         <div class="sec-label">Avis clients</div>
-        <div class="sec-title" style="font-size:28px;margin-bottom:16px">
-            Ce qu'elles en disent
+        <div class="sec-title" style="font-size:clamp(32px,4.5vw,52px);margin-bottom:16px; font-family: 'Fraunces', serif">
+            Elles ont choisi KEKELI <br> Wear, elles en parlent
         </div>
 
         {{-- Score moyen global --}}
         <div class="avg-score">
-            <div class="avg-num">{{ number_format($avgRating, 1, ',', '') }}</div>
+            <div class="avg-num" style="color: red;">{{ number_format($avgRating, 1, ',', '') }}</div>
             <div class="avg-detail">
-                <div style="color:var(--kgold);font-size:16px;margin-bottom:2px">
+                <div style="color:var(--red);font-size:16px;margin-bottom:2px">
                     @for($i = 1; $i <= 5; $i++)
                         {{ $i <= round($avgRating) ? '★' : '☆' }}
                     @endfor
@@ -49,56 +49,84 @@
 
         </div>
 
-        {{-- ===== FORMULAIRE SOUMISSION AVIS ===== --}}
-        <div class="review-form-wrap">
-            <div class="sec-label" style="margin-top:48px">Partagez votre expérience</div>
-            <div style="font-size:14px;color:var(--kgray);margin-bottom:24px">
-                Votre avis sera publié après validation. Merci de votre confiance ✦
+        {{-- Bouton pour ouvrir le formulaire d'avis --}}
+        <div class="review-toggle-btn">
+            <button class="btn-gold" onclick="toggleReviewForm()" id="btn-review-toggle">
+                ✦ Laisser mon avis
+            </button>
+            <span style="font-size:13px;color:var(--soft)">
+                Votre avis sera publié après validation par notre équipe.
+            </span>
+        </div>
+
+        {{-- Formulaire — masqué par défaut, s'ouvre au clic --}}
+        <div class="review-form-wrap" id="review-form-wrap">
+
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+                <div>
+                    <div style="font-size:16px;font-weight:700;color:var(--white)">
+                        Partagez votre expérience ✦
+                    </div>
+                    <div style="font-size:12px;color:var(--soft);margin-top:4px">
+                        KEKELI WEAR — Mode afrofusion, Cotonou Bénin
+                    </div>
+                </div>
+                <button onclick="toggleReviewForm()"
+                        style="background:none;border:none;font-size:22px;color:var(--soft);cursor:pointer;line-height:1"
+                        aria-label="Fermer">✕</button>
             </div>
 
-            <form id="review-form" style="max-width:560px">
-                @csrf
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Prénom *</label>
-                        <input class="form-input" id="rv-name"
-                               type="text" placeholder="Votre prénom" required />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Ville</label>
-                        <input class="form-input" id="rv-city"
-                               type="text" placeholder="Ex: Cotonou, Bénin" />
-                    </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Prénom *</label>
+                    <input class="form-input" id="rv-name"
+                           type="text" placeholder="Votre prénom" required />
                 </div>
-
-                {{-- Sélecteur d'étoiles --}}
-                <div class="form-group" style="margin-bottom:14px">
-                    <label class="form-label">Note *</label>
-                    <div class="star-picker" id="star-picker">
-                        @for($i = 1; $i <= 5; $i++)
-                            <span class="star-pick {{ $i <= 5 ? 'active' : '' }}"
-                                  data-val="{{ $i }}"
-                                  onclick="pickStar({{ $i }})">★</span>
-                        @endfor
-                    </div>
-                    <input type="hidden" id="rv-rating" value="5" />
+                <div class="form-group">
+                    <label class="form-label">Ville</label>
+                    <input class="form-input" id="rv-city"
+                           type="text" placeholder="Ex: Cotonou, Bénin" />
                 </div>
+            </div>
 
-                <div class="form-group" style="margin-bottom:20px">
-                    <label class="form-label">Votre avis *</label>
-                    <textarea class="form-input" id="rv-content"
-                              rows="3"
-                              placeholder="Partagez votre expérience avec KEKELI Wear..."
-                              required></textarea>
+            {{-- Sélecteur étoiles --}}
+            <div class="form-group" style="margin-bottom:16px">
+                <label class="form-label">Votre note *</label>
+                <div class="star-picker" id="star-picker">
+                    @for($i = 1; $i <= 5; $i++)
+                        <span class="star-pick {{ $i <= 5 ? 'active' : '' }}"
+                              data-val="{{ $i }}"
+                              onclick="pickStar({{ $i }})">★</span>
+                    @endfor
                 </div>
+                <input type="hidden" id="rv-rating" value="5" />
+            </div>
 
+            <div class="form-group" style="margin-bottom:22px">
+                <label class="form-label">Votre avis *</label>
+                <textarea class="form-input" id="rv-content"
+                          rows="4"
+                          placeholder="Partagez votre expérience avec KEKELI Wear — la qualité des créations, le service, la livraison..."
+                          required></textarea>
+            </div>
+
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
                 <button type="button" class="btn-gold" onclick="submitReview()">
-                    ✦ Soumettre mon avis
+                    Soumettre mon avis
                 </button>
+                <button type="button"
+                        onclick="toggleReviewForm()"
+                        class="btn-outline-dark">
+                    Annuler
+                </button>
+            </div>
 
-                <div id="review-feedback" style="display:none;margin-top:14px;font-size:13px"></div>
-            </form>
-        </div>
+            <div id="review-feedback"
+                 style="display:none;margin-top:16px;font-size:13px;
+                        padding:12px 16px;border-radius:4px">
+            </div>
+
+        </div>{{-- /review-form-wrap --}}
 
     </div>
 </section>

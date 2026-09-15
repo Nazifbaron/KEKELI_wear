@@ -11,8 +11,12 @@
     {{-- Hero Carousel --}}
     @include('sections.hero', ['slides' => $slides])
 
-    {{-- À propos --}}
-    @include('sections.about')
+        {{-- Avantages clés (entre hero et about) --}}
+    @include('sections.advantages')
+
+
+    {{-- À propos
+    @include('sections.about')--}}
 
     {{-- Catalogue — 4 univers --}}
     @include('sections.catalogue', ['categories' => $categories])

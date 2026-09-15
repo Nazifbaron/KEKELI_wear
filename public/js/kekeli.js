@@ -643,3 +643,108 @@ function fetchStats() {
 /* Premier refresh après 2s (laisser la page charger) puis toutes les 60s */
 setTimeout(fetchStats, 2000);
 setInterval(fetchStats, 60000);
+
+
+/* ============================================================
+   NAVBAR — transparent → blanc au scroll
+   TOP BAR — disparaît après 80px de scroll
+============================================================ */
+(function () {
+    var nav      = document.getElementById('main-nav');
+    var topBar   = document.getElementById('top-bar');
+    var topBarH  = topBar ? topBar.offsetHeight : 0;
+
+    /* Décaler la nav sous le top bar au chargement */
+    if (nav) nav.style.top = topBarH + 'px';
+
+    window.addEventListener('scroll', function () {
+        var y = window.scrollY;
+
+        /* Top bar disparaît après 80px */
+        if (topBar) {
+            if (y > 80) {
+                topBar.classList.add('hidden');
+                if (nav) nav.style.top = '0px';
+            } else {
+                topBar.classList.remove('hidden');
+                if (nav) nav.style.top = topBarH + 'px';
+            }
+        }
+
+        /* Nav devient blanche après 60px */
+        if (nav) nav.classList.toggle('scrolled', y > 60);
+
+        /* Scroll spy sections */
+        var sections = ['hero','advantages','about','catalogue','featured','shop','morphology','reviews','contact'];
+        sections.forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            if (el.offsetTop <= y + 80 && el.offsetTop + el.offsetHeight > y + 80) {
+                document.querySelectorAll('.nav-link').forEach(function (a) {
+                    a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+                });
+            }
+        });
+    }, { passive: true });
+})();
+
+/* ============================================================
+   MENU MOBILE
+============================================================ */
+function closeMobileMenu() {
+    document.getElementById('mobile-menu')?.classList.remove('open');
+}
+
+(function () {
+    var toggle = document.getElementById('nav-toggle');
+    var menu   = document.getElementById('mobile-menu');
+    var close  = document.getElementById('mobile-menu-close');
+
+    if (toggle && menu) {
+        toggle.addEventListener('click', function () {
+            menu.classList.toggle('open');
+        });
+    }
+    if (close) {
+        close.addEventListener('click', closeMobileMenu);
+    }
+})();
+
+/* ============================================================
+   SECTION AVANTAGES — révélation au scroll
+============================================================ */
+(function () {
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach(function (el) {
+        observer.observe(el);
+    });
+})();
+
+/* ============================================================
+   AVIS — TOGGLE FORMULAIRE
+============================================================ */
+function toggleReviewForm() {
+    var wrap = document.getElementById('review-form-wrap');
+    var btn  = document.getElementById('btn-review-toggle');
+    if (!wrap) return;
+
+    var isOpen = wrap.classList.toggle('open');
+    if (btn) {
+        btn.textContent = isOpen ? '✕ Fermer' : '✦ Laisser mon avis';
+    }
+    if (isOpen) {
+        /* Scroll doux vers le formulaire */
+        setTimeout(function () {
+            wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
+}
+

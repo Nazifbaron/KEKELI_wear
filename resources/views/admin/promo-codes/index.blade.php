@@ -10,8 +10,8 @@
 <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
 
     {{-- Liste codes --}}
-    <div style="flex:2;min-width:300px">
-        <div class="admin-card" >
+    <div style="flex:2;min-width:300px;">
+        <div class="admin-card" style="padding:0px">
             <table class="admin-table" >
                 <thead>
                     <tr>

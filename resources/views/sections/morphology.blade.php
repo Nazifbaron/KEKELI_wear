@@ -10,21 +10,18 @@
     <div class="container">
 
         <div class="sec-label">Espace personnel</div>
-        <div class="sec-title" style="font-size:28px">Mon profil morphologique</div>
+        <div class="sec-title" style="font-size:28px;color:#fff">Mon profil morphologique</div>
         <div class="divider"></div>
-        <p class="sec-sub" style="margin-bottom:40px">
+        <p class="sec-sub" style="margin-bottom:40px;color:#fff">
             Identifiez votre morphologie pour recevoir des conseils de style personnalisés,
             puis renseignez vos mesures pour commander en toute confiance.
         </p>
 
         <div class="morpho-grid">
-
             {{-- ===== COLONNE GAUCHE : Sélection morphologie ===== --}}
             <div>
-                <div class="morpho-section-label">Sélectionnez votre morphologie</div>
-
+                <div class="morpho-section-label" style="color:#fff">Sélectionnez votre morphologie</div>
                 <div class="morpho-tabs">
-
                     {{-- Sablier --}}
                     <div class="morpho-tab active"
                          onclick="selectMorpho(this,'hourglass',
