@@ -25,10 +25,10 @@
     <div class="nav-inner">
 
         {{-- Logo --}}
-        <a class="nav-logo" href="#hero">
+        <a class="nav-logo" href="{{ url('/') }}">
             <img src="{{ asset('images/logo1.png') }}"
                  alt="KEKELI WEAR"
-                 style="height:56px;width:auto" />
+                 style="height:96px;width:auto" />
         </a>
 
         {{-- Liens desktop --}}
@@ -41,7 +41,7 @@
             <a href="#morphology"  class="nav-link">Mon profil</a>
             <a href="#reviews"     class="nav-link">Avis</a>
             <a href="#contact"     class="nav-link">Contact</a>
-            <a href="#about"       class="nav-link">À propos</a>
+            <a href="/about"       class="nav-link">À propos</a>
         </div>
 
         {{-- Bouton menu mobile --}}

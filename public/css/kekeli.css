@@ -291,6 +291,7 @@ nav.scrolled .nav-toggle { color: var(--black); }
   background: var(--white);
   padding: 60px 24px;
   border-bottom: 1px solid var(--border);
+  height: 280px;
 }
 .advantages-grid {
   max-width: 1200px; margin: 0 auto;
@@ -795,7 +796,7 @@ nav.scrolled .nav-toggle { color: var(--black); }
 /* ============================================================
    MORPHOLOGIE
 ============================================================ */
-#morphology { background: #0f0f0f; }
+#morphology { background: #332f2f; }
 .morpho-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
 .morpho-section-label {
     font-size: 10px; font-weight: 700; letter-spacing: .12em;
@@ -880,8 +881,11 @@ textarea.form-input { resize: vertical; }
 }
 .avg-num   { font-size: 44px; font-weight: 700; color: var(--black); }
 .avg-detail { font-size: 12px; color: var(--soft); line-height: 1.6; }
-.temo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+.temo-carousel { position: relative; }
+.temo-viewport { overflow: hidden; }
+.temo-track { display: flex; gap: 24px; transition: transform .5s ease; }
 .temo-card {
+  flex: 0 0 calc((100% - 48px) / 3); min-height: 190px;
   background: var(--cream); border: 1px solid var(--border);
   border-radius: 4px; padding: 24px; transition: all .2s;
 }
@@ -890,6 +894,17 @@ textarea.form-input { resize: vertical; }
 .temo-text { font-size: 13px; color: var(--mid); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
 .temo-author { font-size: 12px; font-weight: 700; color: var(--black); }
 .temo-city   { font-size: 11px; color: var(--soft); margin-top: 2px; }
+.temo-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 22px; }
+.temo-arrow {
+  width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 50%;
+  background: var(--cream); color: var(--black); cursor: pointer; font-size: 16px;
+  transition: all .2s;
+}
+.temo-arrow:hover { background: var(--red); border-color: var(--red); color: #fff; }
+.temo-dots { display: flex; align-items: center; gap: 7px; }
+.temo-dot { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: var(--border); cursor: pointer; transition: all .2s; }
+.temo-dot.active { width: 22px; border-radius: 7px; background: var(--red); }
+.temo-empty { color: var(--kgray); text-align: center; padding: 20px; }
 
 /* Formulaire avis — bouton toggle */
 .review-toggle-btn {
@@ -1058,6 +1073,101 @@ footer {
     transform: translateY(0);
 }
 
+/* =========================================================
+   FORMULAIRE CONTACT — KEKELI
+   ========================================================= */
+.k-contact-form {
+    width: 100%; background: #FDFAF5; padding: 32px; border: 1px solid rgba(160, 82, 45, 0.15);
+    border-radius: 12px; box-shadow: 0 4px 20px -5px rgba(160, 82, 45, 0.05);
+}
+
+/* =========================================================
+   GROUPE
+   ========================================================= */
+.k-form-group { position: relative; width: 100%; margin-bottom: 32px;}
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+.k-form-input {
+    display: block;  width: 100% !important; height: 42px !important; margin: 0 !important; padding: 8px 0 !important;
+    background: transparent !important; border: 0 !important; border-bottom: 2px solid #c9b8ad !important;
+    border-radius: 0 !important; outline: none !important; box-shadow: none !important; font-family: "Hanken Grotesk", sans-serif;
+    font-size: 15px; line-height: 24px; color: #1A1A1A; transition: border-color .25s ease, box-shadow .25s ease;
+}
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+.k-form-input:focus { border-bottom-color: #e42829 !important; outline: none !important; box-shadow: none !important;}
+
+/* =========================================================
+   PLACEHOLDER INVISIBLE
+   ========================================================= */
+.k-form-input::placeholder { color: transparent !important;}
+
+/* =========================================================
+   LABEL
+   ========================================================= */
+.k-form-label {
+    position: absolute !important; left: 0 !important; top: 8px !important; display: block;
+    margin: 0 !important; padding: 0 !important; background: transparent; font-family: "Hanken Grotesk", sans-serif;
+    font-size: 12px; line-height: 16px;  font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: #6f6a64; pointer-events: none; transition:  top .25s ease, font-size .25s ease, color .25s ease;
+}
+
+/* =========================================================
+   FOCUS → LABEL MONTE
+   ========================================================= */
+.k-form-input:focus + .k-form-label {
+    top: -16px !important; font-size: 10px; color: #e42829;
+}
+
+/* =========================================================
+   CHAMP REMPLI → LABEL RESTE EN HAUT
+   ========================================================= */
+.k-form-input:not(:placeholder-shown) + .k-form-label {
+    top: -16px !important; font-size: 10px; color: #6f6a64;
+}
+
+/* =========================================================
+   REMPLI + FOCUS
+   ========================================================= */
+.k-form-input:not(:placeholder-shown):focus + .k-form-label { color: #e42829;}
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+.k-form-textarea { height: auto !important; min-height: 110px; padding-top: 8px !important; resize: none;}
+
+/* =========================================================
+   BOUTON
+   ========================================================= */
+.k-btn-contact {
+    display: block; width: 100%; margin: 4px 0 0 0; padding: 16px 32px; border: none; border-radius: 999px;
+    background: #e42829; color: #ffffff; font-family: "Hanken Grotesk", sans-serif; font-size: 12px;
+    line-height: 16px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    cursor: pointer; transition: transform .3s ease, box-shadow .3s ease, background .3s ease;}
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+.k-btn-contact:hover { background: #c92021; box-shadow: 0 4px 15px rgba(228, 40, 41, .30); transform: translateY(-2px);}
+
+/* =========================================================
+   ACTIVE
+   ========================================================= */
+.k-btn-contact:active { transform: translateY(0);}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+@media (max-width: 600px) {
+    .k-contact-form {
+        padding: 24px 20px;
+    }
+}
+
 /* ============================================================
    RESPONSIVE
 ============================================================ */
@@ -1070,7 +1180,7 @@ footer {
   .about-grid, .morpho-grid, .contact-grid { grid-template-columns: 1fr; }
   .universes      { grid-template-columns: 1fr 1fr; }
   .products-grid  { grid-template-columns: 1fr 1fr; }
-  .temo-grid      { grid-template-columns: 1fr 1fr; }
+  .temo-card      { flex-basis: calc((100% - 24px) / 2); }
   .foot-grid      { grid-template-columns: 1fr 1fr; }
   .fav-card       { min-width: calc(50% - 10px); }
   .slide-title    { font-size: 38px; }
@@ -1083,7 +1193,7 @@ footer {
 @media (max-width: 600px) {
   .universes      { grid-template-columns: 1fr; }
   .products-grid  { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .temo-grid      { grid-template-columns: 1fr; }
+  .temo-card      { flex-basis: 100%; }
   .fav-card       { min-width: calc(90% - 10px); }
   .slide-title    { font-size: 28px; }
   .slide-content  { padding: 0 24px; }

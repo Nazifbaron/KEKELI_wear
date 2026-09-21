@@ -12,8 +12,44 @@
             Elles ont choisi KEKELI <br> Wear, elles en parlent
         </div>
 
+        {{-- Carrousel des avis --}}
+        @if($reviews->isNotEmpty())
+            <div class="temo-carousel" data-review-count="{{ $reviews->count() }}">
+                <div class="temo-viewport">
+                    <div class="temo-track">
+                        @foreach($reviews as $review)
+                            <article class="temo-card">
+                                <div class="stars" aria-label="Note : {{ $review->rating }} sur 5">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        {{ $i <= $review->rating ? '★' : '☆' }}
+                                    @endfor
+                                </div>
+                                <div class="temo-text">"{{ $review->content }}"</div>
+                                <div class="temo-author">{{ $review->first_name }}</div>
+                                @if($review->city)
+                                    <div class="temo-city">{{ $review->city }}</div>
+                                @endif
+                            </article>
+                        @endforeach
+                    </div>
+                </div>
+
+                @if($reviews->count() > 1)
+                    <div class="temo-controls">
+                        <button class="temo-arrow" type="button" data-review-prev aria-label="Avis précédent">←</button>
+                        <div class="temo-dots" aria-label="Choisir un avis"></div>
+                        <button class="temo-arrow" type="button" data-review-next aria-label="Avis suivant">→</button>
+                    </div>
+                @endif
+            </div>
+        @else
+            <p class="temo-empty">
+                Aucun avis pour le moment. Soyez la première à partager votre expérience !
+            </p>
+        @endif
+
         {{-- Score moyen global --}}
-        <div class="avg-score">
+        <div class="avg-score" style="margin-top:22px;">
             <div class="avg-num" style="color: red;">{{ number_format($avgRating, 1, ',', '') }}</div>
             <div class="avg-detail">
                 <div style="color:var(--red);font-size:16px;margin-bottom:2px">
@@ -25,32 +61,8 @@
             </div>
         </div>
 
-        {{-- Grille des avis --}}
-        <div class="temo-grid">
-
-            @forelse($reviews as $review)
-            <div class="temo-card">
-                <div class="stars">
-                    @for($i = 1; $i <= 5; $i++)
-                        {{ $i <= $review->rating ? '★' : '☆' }}
-                    @endfor
-                </div>
-                <div class="temo-text">"{{ $review->content }}"</div>
-                <div class="temo-author">{{ $review->first_name }}</div>
-                @if($review->city)
-                    <div class="temo-city">{{ $review->city }}</div>
-                @endif
-            </div>
-            @empty
-            <p style="color:var(--kgray);grid-column:1/-1;text-align:center;padding:20px">
-                Aucun avis pour le moment. Soyez la première à partager votre expérience !
-            </p>
-            @endforelse
-
-        </div>
-
         {{-- Bouton pour ouvrir le formulaire d'avis --}}
-        <div class="review-toggle-btn">
+        <div class="review-toggle-btn" style="margin-top:12px;">
             <button class="btn-gold" onclick="toggleReviewForm()" id="btn-review-toggle">
                 ✦ Laisser mon avis
             </button>

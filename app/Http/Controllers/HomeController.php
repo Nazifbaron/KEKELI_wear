@@ -10,82 +10,61 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+    /*
+    |----------------------------------------------------------
+    | Page principale one-page
+    | Toutes les données nécessaires aux sections sont chargées
+    | ici pour éviter les requêtes AJAX au premier chargement.
+    |----------------------------------------------------------
+    */
     public function index()
     {
-        /*
-        |----------------------------------------------------------
-        | Catégories actives avec compteur produits
-        | Utilisées pour les 4 univers + les filtres boutique
-        |----------------------------------------------------------
-        */
+        /* Catégories actives avec compteur produits */
         $categories = Category::active()
-            ->withCount(['products as product_count' => fn($q) => $q->where('is_active', true)])
+            ->withCount(['products as product_count' => fn($q) =>
+                $q->where('is_active', true)
+            ])
             ->get();
 
-        /*
-        |----------------------------------------------------------
-        | Tous les produits actifs avec leur catégorie
-        | Triés par score coup de cœur décroissant
-        |----------------------------------------------------------
-        */
+        /* Tous les produits actifs avec leur catégorie */
         $products = Product::active()
             ->with('category')
             ->orderByDesc('heart_score')
             ->get();
 
-        /*
-        |----------------------------------------------------------
-        | Coups de cœur — auto-détectés (is_featured = true)
-        | + admin override possible depuis le backoffice
-        |----------------------------------------------------------
-        */
-        $featured = Product::featured(config('kekeli.max_featured', 6))
+        /* Coups de cœur */
+        $featured = Product::featured()
             ->with('category')
+            ->orderByDesc('heart_score')
+            ->take(config('kekeli.max_featured', 6))
             ->get();
 
-        /*
-        |----------------------------------------------------------
-        | Slides du hero carousel
-        | Si l'admin n'a pas encore configuré de slides,
-        | on passe un tableau vide et la vue utilisera
-        | les slides par défaut codés en dur (fallback).
-        |----------------------------------------------------------
-        */
+        /* Slides hero depuis la BD — fallback 3 slides codées si vide */
         $slides = HeroSlide::where('is_active', true)
             ->orderBy('order')
             ->get();
 
-        /*
-        |----------------------------------------------------------
-        | Avis clients validés + note moyenne
-        |----------------------------------------------------------
-        */
-        $reviews    = Review::approved()->latest()->take(6)->get();
-        $avgRating  = Review::averageRating();
+        /* Avis approuvés */
+        $reviews   = Review::approved()->latest()->take(6)->get();
+        $avgRating = Review::averageRating() ?: 5.0;
 
-        /*
-        |----------------------------------------------------------
-        | Stats globales pour la barre de stats (nav)
-        | Ces données sont aussi exposées via /api/stats
-        | pour le refresh AJAX toutes les 60s
-        |----------------------------------------------------------
-        */
+        /* Stats globales pour la barre et le JS */
         $stats = [
-            'total_products' => Product::active()->count(),
+            'total_products' => $products->count(),
             'total_likes'    => Product::active()->sum('likes'),
             'total_views'    => Product::active()->sum('views'),
-            'avg_rating'     => $avgRating,
+            'avg_rating'     => number_format($avgRating, 1, ',', ''),
             'per_category'   => $categories->pluck('product_count', 'slug'),
         ];
 
         return view('home', compact(
-            'categories',
-            'products',
-            'featured',
-            'slides',
-            'reviews',
-            'avgRating',
-            'stats'
+            'categories', 'products', 'featured',
+            'slides', 'reviews', 'avgRating', 'stats'
         ));
+    }
+
+    public function about()
+    {
+        return view('about');
     }
 }

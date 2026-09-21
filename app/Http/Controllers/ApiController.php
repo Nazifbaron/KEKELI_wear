@@ -126,7 +126,10 @@ class ApiController extends Controller
     /*
     |----------------------------------------------------------
     | VERIFY PROMO CODE
-    | Vérifie validité + retourne le % ou montant de remise
+    | 1. Vérifie la validité du code
+    | 2. Le sauvegarde en SESSION pour que le panier
+    |    et le checkout puissent l'utiliser
+    | 3. Retourne les infos de remise pour l'affichage front
     |----------------------------------------------------------
     */
     public function verifyPromo(Request $request): JsonResponse
@@ -141,6 +144,17 @@ class ApiController extends Controller
             ], 422);
         }
 
+        /*
+        |----------------------------------------------------------
+        | Sauvegarder le code promo en session Laravel
+        | → sera récupéré par getCart() et CheckoutController
+        |----------------------------------------------------------
+        */
+        $request->session()->put('promo_code_id', $promo->id);
+        $request->session()->put('promo_code',    $promo->code);
+        $request->session()->put('promo_discount', $promo->discount);
+        $request->session()->put('promo_type',    $promo->type);
+
         return response()->json([
             'valid'    => true,
             'discount' => $promo->discount,
@@ -148,6 +162,23 @@ class ApiController extends Controller
             'label'    => $promo->label,
             'message'  => $promo->label . ' appliqué !',
         ]);
+    }
+
+    /*
+    |----------------------------------------------------------
+    | REMOVE PROMO — Retirer le code promo de la session
+    |----------------------------------------------------------
+    */
+    public function removePromo(Request $request): JsonResponse
+    {
+        $request->session()->forget([
+            'promo_code_id',
+            'promo_code',
+            'promo_discount',
+            'promo_type',
+        ]);
+
+        return response()->json(['success' => true]);
     }
 
     /*
@@ -193,32 +224,74 @@ class ApiController extends Controller
     /*
     |----------------------------------------------------------
     | CART — GET
-    | Retourne les items du panier pour la session courante
+    | Retourne les items avec prix réduits si promo en session
     |----------------------------------------------------------
     */
     public function getCart(Request $request): JsonResponse
     {
         $sessionId = $request->session()->getId();
-
         $items = CartItem::where('session_id', $sessionId)
             ->with('product.category')
-            ->get()
-            ->map(fn($i) => [
-                'id'        => $i->product_id,
-                'name'      => $i->product->name,
-                'category'  => $i->product->category->name,
-                'price'     => $i->product->formatted_price,
-                'raw_price' => $i->product->price,
-                'image'     => $i->product->main_image,
-                'quantity'  => $i->quantity,
-                'is_custom' => $i->product->is_custom,
-                'subtotal'  => $i->subtotal,
-            ]);
+            ->get();
+        /*
+        |----------------------------------------------------------
+        | Récupérer le code promo depuis la session
+        | Calculer les prix affichés avec remise
+        |----------------------------------------------------------
+        */
+        $promoDiscount = $request->session()->get('promo_discount', 0);
+        $promoType     = $request->session()->get('promo_type', 'percentage');
+        $promoCode     = $request->session()->get('promo_code');
+        $promoId       = $request->session()->get('promo_code_id');
+        $subtotal      = 0;
+        $totalDiscount = 0;
+
+        $mappedItems = $items->map(function ($i) use ($promoDiscount, $promoType, &$subtotal, &$totalDiscount) {
+            $basePrice    = $i->product->price ?? 0;
+            $lineSubtotal = $basePrice * $i->quantity;
+            $subtotal    += $lineSubtotal;
+
+            // Calculer le prix réduit par ligne
+            $reducedPrice = $basePrice;
+            if ($promoDiscount > 0 && $basePrice > 0) {
+                $reducedPrice = $promoType === 'percentage'
+                    ? $basePrice * (1 - $promoDiscount / 100)
+                    : max(0, $basePrice - $promoDiscount);
+                $totalDiscount += ($basePrice - $reducedPrice) * $i->quantity;
+            }
+
+            return [
+                'id'            => $i->product_id,
+                'name'          => $i->product->name,
+                'category'      => $i->product->category->name ?? '',
+                'price'         => $i->product->formatted_price,          // Prix original affiché
+                'price_reduced' => $promoDiscount > 0 && $basePrice > 0   // Prix réduit si promo
+                    ? number_format($reducedPrice, 0, ',', ' ') . ' XOF'
+                    : null,
+                'raw_price'     => $basePrice,
+                'raw_reduced'   => $reducedPrice,
+                'image'         => $i->product->main_image,
+                'quantity'      => $i->quantity,
+                'is_custom'     => $i->product->is_custom,
+                'subtotal'      => $lineSubtotal,
+                'subtotal_reduced' => $reducedPrice * $i->quantity,
+            ];
+        });
+
+        $totalAfterDiscount = $subtotal - $totalDiscount;
 
         return response()->json([
-            'items' => $items,
-            'total' => $items->sum('quantity'),
-            'amount'=> $items->sum('subtotal'),
+            'items'         => $mappedItems,
+            'total'         => $mappedItems->sum('quantity'),
+            'subtotal'      => $subtotal,
+            'discount'      => round($totalDiscount),
+            'amount'        => round($totalAfterDiscount),   // Montant FINAL après remise
+            'promo_code'    => $promoCode,
+            'promo_label'   => $promoCode
+                ? ($promoType === 'percentage'
+                    ? '-' . $promoDiscount . '%'
+                    : '-' . number_format($promoDiscount, 0, ',', ' ') . ' XOF')
+                : null,
         ]);
     }
 

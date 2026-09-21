@@ -61,9 +61,9 @@ class CheckoutController extends Controller
 
         $sessionId = $request->session()->getId();
 
-        // Récupérer les items du panier avec produits
+        // Récupérer les items du panier
         $cartItems = CartItem::where('session_id', $sessionId)
-                             ->with('product.category', 'promoCode')
+                             ->with('product.category')
                              ->get();
 
         if ($cartItems->isEmpty()) {
@@ -75,24 +75,35 @@ class CheckoutController extends Controller
 
         /*
         |----------------------------------------------------------
-        | Calcul des montants côté serveur
-        | On ne fait jamais confiance aux montants du front
+        | Récupérer le code promo depuis la SESSION
+        | (pas depuis les CartItems — le code est en session)
         |----------------------------------------------------------
         */
-        $subtotal  = 0;
-        $discount  = 0;
-        $promoCode = $cartItems->first()->promoCode;
+        $promoCodeId  = $request->session()->get('promo_code_id');
+        $promoCode    = $promoCodeId ? PromoCode::find($promoCodeId) : null;
 
-        foreach ($cartItems as $item) {
-            $price     = $item->product->price ?? 0;
-            $subtotal += $price * $item->quantity;
+        // Vérifier que le promo est toujours valide au moment du checkout
+        if ($promoCode && !$promoCode->isValid()) {
+            $promoCode = null;
+            $request->session()->forget(['promo_code_id','promo_code','promo_discount','promo_type']);
         }
 
-        // Appliquer le code promo si valide
-        if ($promoCode && $promoCode->isValid()) {
+        /*
+        |----------------------------------------------------------
+        | Calcul des montants côté serveur - anti-fraude
+        | On recalcule tout depuis la BD, jamais depuis le front
+        |----------------------------------------------------------
+        */
+        $subtotal = 0;
+        foreach ($cartItems as $item) {
+            $subtotal += ($item->product->price ?? 0) * $item->quantity;
+        }
+
+        $discount = 0;
+        if ($promoCode) {
             $discount = $promoCode->type === 'percentage'
                 ? round($subtotal * ($promoCode->discount / 100))
-                : min($promoCode->discount, $subtotal);
+                : min((float)$promoCode->discount, $subtotal);
         }
 
         $total = max(0, $subtotal - $discount);
@@ -151,11 +162,15 @@ class CheckoutController extends Controller
                 $item->product->recalculateScore();
             }
 
-            // Consommer le code promo (incrémenter used_count)
+            // Consommer le code promo
             $promoCode?->markUsed();
 
-            // Vider le panier session
+            // Vider le panier ET la session promo
             CartItem::where('session_id', $sessionId)->delete();
+            $request->session()->forget([
+                'promo_code_id', 'promo_code',
+                'promo_discount', 'promo_type',
+            ]);
 
             DB::commit();
 

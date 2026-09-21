@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
    window.TOTAL_SLIDES = {{ $slides->count() ?? 3 }}
 ============================================================ */
 var currentSlide = 0;
-var totalSlides  = window.TOTAL_SLIDES || document.querySelectorAll('.slide').length || 3;
+var totalSlides  = window.TOTAL_SLIDES || 3;
 var slideTimer;
 
 function goSlide(n) {
@@ -337,46 +337,52 @@ function removeFromCartApi(productId) {
 
 /* Afficher le panier */
 function renderCart(items, total, amount) {
-    var badge      = document.getElementById('cart-badge');
-    var itemsEl    = document.getElementById('cart-items');
-    var totalEl    = document.getElementById('cart-total');
-    var actionsEl  = document.getElementById('cart-actions');
+    var badge    = document.getElementById('cart-badge');
+    var itemsEl  = document.getElementById('cart-items');
+    var totalEl  = document.getElementById('cart-total');
+    var footerEl = document.getElementById('cart-footer');
 
     if (badge) badge.textContent = total || 0;
     if (!itemsEl) return;
 
     if (!items || items.length === 0) {
         itemsEl.innerHTML = '<div class="cart-empty">Votre panier est vide.</div>';
-        if (totalEl)   totalEl.style.display   = 'none';
-        if (actionsEl) actionsEl.style.display  = 'none';
+        if (footerEl) footerEl.style.display = 'none';
         return;
     }
 
-    itemsEl.innerHTML = items.map(item =>
-        `<div class="cart-item">
-            <div class="cart-item-thumb"
-                 style="${item.image
-                    ? `background-image:url('/storage/${item.image}');background-size:cover`
-                    : 'background:#1a1a1a'}">
-            </div>
-            <div style="flex:1">
-                <div class="cart-item-name">${item.name}</div>
-                <div class="cart-item-price">${item.price}</div>
-            </div>
-            <button class="cart-item-remove"
-                    onclick="removeFromCartApi(${item.id})"
-                    aria-label="Retirer">×</button>
-        </div>`
-    ).join('');
+    itemsEl.innerHTML = items.map(function(item) {
+        var imgStyle = item.image
+            ? 'background-image:url(/storage/' + item.image + ');background-size:cover;background-position:center'
+            : '';
 
+        /*
+        | Si un code promo est actif → afficher prix barré + prix réduit
+        | price_reduced est calculé côté serveur dans getCart()
+        */
+        var priceHtml = item.price_reduced
+            ? '<span style="text-decoration:line-through;color:#8A8A8A;font-size:11px">'
+                + item.price + '</span> '
+                + '<span style="color:#16a34a;font-weight:700">' + item.price_reduced + '</span>'
+            : item.name_display || item.price;
+
+        return '<div class="cart-item">'
+            + '<div class="cart-item-thumb" style="' + imgStyle + '"></div>'
+            + '<div style="flex:1">'
+            + '<div class="cart-item-name">' + (item.name || '') + '</div>'
+            + '<div class="cart-item-price">' + priceHtml + '</div>'
+            + '</div>'
+            + '<button class="cart-item-remove" onclick="removeFromCartApi(' + item.id + ')" aria-label="Retirer">×</button>'
+            + '</div>';
+    }).join('');
+
+    /* Afficher total avec remise si applicable */
     if (totalEl) {
-        var amountStr = amount
-            ? amount.toLocaleString('fr-FR') + ' XOF'
+        totalEl.textContent = amount
+            ? parseInt(amount).toLocaleString('fr-FR') + ' XOF'
             : total + ' article(s)';
-        totalEl.textContent = total + ' article(s) — ' + amountStr;
-        totalEl.style.display = 'block';
     }
-    if (actionsEl) actionsEl.style.display = 'block';
+    if (footerEl) footerEl.style.display = 'block';
 }
 
 function renderCartLocal() {
@@ -644,7 +650,6 @@ function fetchStats() {
 setTimeout(fetchStats, 2000);
 setInterval(fetchStats, 60000);
 
-
 /* ============================================================
    NAVBAR — transparent → blanc au scroll
    TOP BAR — disparaît après 80px de scroll
@@ -729,6 +734,73 @@ function closeMobileMenu() {
 })();
 
 /* ============================================================
+   AVIS — CARROUSEL
+============================================================ */
+(function () {
+    var carousel = document.querySelector('.temo-carousel');
+    if (!carousel) return;
+
+    var viewport = carousel.querySelector('.temo-viewport');
+    var track    = carousel.querySelector('.temo-track');
+    var cards    = carousel.querySelectorAll('.temo-card');
+    var dotsWrap = carousel.querySelector('.temo-dots');
+    var previous = carousel.querySelector('[data-review-prev]');
+    var next     = carousel.querySelector('[data-review-next]');
+    var current  = 0;
+    var timer;
+
+    function visibleCards() {
+        return Math.max(1, Math.round(viewport.offsetWidth / cards[0].offsetWidth));
+    }
+
+    function maxPosition() {
+        return Math.max(0, cards.length - visibleCards());
+    }
+
+    function moveTo(position) {
+        current = Math.min(Math.max(position, 0), maxPosition());
+        var distance = cards[0].getBoundingClientRect().width + 24;
+        track.style.transform = 'translateX(-' + (current * distance) + 'px)';
+        carousel.querySelectorAll('.temo-dot').forEach(function (dot, index) {
+            dot.classList.toggle('active', index === current);
+            dot.setAttribute('aria-current', index === current ? 'true' : 'false');
+        });
+    }
+
+    function buildDots() {
+        if (!dotsWrap) return;
+        dotsWrap.innerHTML = '';
+        for (var index = 0; index <= maxPosition(); index++) {
+            var dot = document.createElement('button');
+            dot.className = 'temo-dot';
+            dot.type = 'button';
+            dot.setAttribute('aria-label', 'Afficher les avis ' + (index + 1));
+            dot.addEventListener('click', function () { moveTo(Number(this.dataset.position)); });
+            dot.dataset.position = index;
+            dotsWrap.appendChild(dot);
+        }
+    }
+
+    function restartTimer() {
+        clearInterval(timer);
+        if (cards.length > visibleCards()) {
+            timer = setInterval(function () {
+                moveTo(current >= maxPosition() ? 0 : current + 1);
+            }, 5000);
+        }
+    }
+
+    buildDots();
+    moveTo(0);
+    restartTimer();
+    previous?.addEventListener('click', function () { moveTo(current - 1); restartTimer(); });
+    next?.addEventListener('click', function () { moveTo(current + 1); restartTimer(); });
+    carousel.addEventListener('mouseenter', function () { clearInterval(timer); });
+    carousel.addEventListener('mouseleave', restartTimer);
+    window.addEventListener('resize', function () { buildDots(); moveTo(current); restartTimer(); });
+})();
+
+/* ============================================================
    AVIS — TOGGLE FORMULAIRE
 ============================================================ */
 function toggleReviewForm() {
@@ -747,4 +819,3 @@ function toggleReviewForm() {
         }, 100);
     }
 }
-

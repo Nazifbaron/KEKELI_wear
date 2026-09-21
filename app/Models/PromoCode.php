@@ -34,7 +34,7 @@ class PromoCode extends Model
     public function getLabelAttribute(): string
     {
         return $this->type === 'percentage'
-            ? '-' . $this->discount . '%'
-            : '-' . number_format($this->discount, 0, ',', ' ') . ' XOF';
+            ? '-' . rtrim(rtrim(number_format((float)$this->discount, 2, '.', ''), '0'), '.') . '%'
+            : '-' . number_format((float)$this->discount, 0, ',', ' ') . ' XOF';
     }
 }

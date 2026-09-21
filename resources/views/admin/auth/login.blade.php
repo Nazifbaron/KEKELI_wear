@@ -9,118 +9,156 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}" />
     <style>
-        /*
-        | Page login centrée — fond sombre avec logo KEKELI
-        */
-        body.admin-body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-
-        .login-card {
-            background: #111; border: 1px solid rgba(255,255,255,.08);
-            border-radius: 8px; padding: 40px 36px;
-            width: 100%; max-width: 380px;
+        body.admin-body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #FAF8F5;
         }
-        .login-logo {
-            text-align: center; margin-bottom: 32px;
+        .login-wrap {
+            display: flex;
+            width: 100%;
+            max-width: 900px;
+            min-height: 520px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 16px 56px rgba(0,0,0,.1);
+            margin: 24px;
         }
-        .login-logo img  { height: 44px; margin: 0 auto 12px; }
-        .login-logo span {
-            display: block; font-size: 11px; font-weight: 600;
-            letter-spacing: .2em; text-transform: uppercase;
-            color: rgba(255,255,255,.4);
+        /* Panneau gauche — brand */
+        .login-brand {
+            flex: 1;
+            background: #1A1A1A;
+            padding: 48px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        .login-title {
-            font-size: 18px; font-weight: 700; color: #fff;
-            margin-bottom: 24px; text-align: center;
+        .login-brand-logo img {
+            height: 40px;
+            filter: brightness(0) invert(1);
         }
-        .login-error {
-            background: rgba(228,40,41,.1); border: 1px solid rgba(228,40,41,.3);
-            border-left: 3px solid #e42829; border-radius: 4px;
-            padding: 10px 14px; font-size: 12px; color: #ef9a9a;
-            margin-bottom: 16px;
+        .login-brand-quote {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.3;
         }
-        .login-success {
-            background: rgba(76,175,80,.1); border: 1px solid rgba(76,175,80,.3);
-            border-left: 3px solid #4caf50; border-radius: 4px;
-            padding: 10px 14px; font-size: 12px; color: #81c784;
-            margin-bottom: 16px;
+        .login-brand-quote span { color: #e42829; }
+        .login-brand-foot {
+            font-size: 11px;
+            color: rgba(255,255,255,.3);
+            letter-spacing: .12em;
+            text-transform: uppercase;
         }
-        .login-footer {
-            text-align: center; margin-top: 20px;
-            font-size: 11px; color: rgba(255,255,255,.25);
+        /* Panneau droit — formulaire */
+        .login-form-panel {
+            width: 380px;
+            background: #fff;
+            padding: 48px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .login-form-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 6px;
+        }
+        .login-form-sub {
+            font-size: 12px;
+            color: #8A8A8A;
+            margin-bottom: 32px;
+        }
+        @media (max-width: 640px) {
+            .login-brand { display: none; }
+            .login-form-panel { width: 100%; }
         }
     </style>
 </head>
 <body class="admin-body">
 
-    <div class="login-card">
+<div class="login-wrap">
 
-        {{-- Logo --}}
-        <div class="login-logo">
-            <img src="{{ asset('images/logo.png') }}"
-                 alt="KEKELI WEAR"
-                 style="filter:brightness(0) invert(1)" />
-            <span>Espace Administration</span>
+    {{-- Panneau gauche — branding --}}
+    <div class="login-brand">
+        <div class="login-brand-logo">
+            <img src="{{ asset('images/logo.png') }}" alt="KEKELI WEAR" />
         </div>
+        <div>
+            <div class="login-brand-quote">
+                Une lumière pour<br><span>la mode au féminin.</span>
+            </div>
+            <p style="font-size:13px;color:rgba(255,255,255,.5);margin-top:16px;line-height:1.6">
+                Espace d'administration sécurisé.<br>
+                Gérez vos produits, commandes et clients.
+            </p>
+        </div>
+        <div class="login-brand-foot">
+            ACCES UNIVERSEL SARL — Cotonou, Bénin
+        </div>
+    </div>
 
-        <div class="login-title">Connexion</div>
+    {{-- Panneau droit — formulaire --}}
+    <div class="login-form-panel">
 
-        {{-- Message succès (après logout) --}}
+        <div class="login-form-title">Connexion</div>
+        <div class="login-form-sub">Espace réservé aux administrateurs</div>
+
+        {{-- Messages --}}
         @if(session('success'))
-            <div class="login-success">{{ session('success') }}</div>
+            <div class="login-success">✓ {{ session('success') }}</div>
         @endif
-
-        {{-- Erreurs --}}
         @if($errors->any())
             <div class="login-error">
-                @foreach($errors->all() as $error)
-                    <div>✗ {{ $error }}</div>
+                @foreach($errors->all() as $err)
+                    <div>✗ {{ $err }}</div>
                 @endforeach
             </div>
         @endif
 
-        {{-- Formulaire de connexion --}}
         <form method="POST" action="{{ route('admin.login.submit') }}">
             @csrf
 
             <div class="form-admin-group">
                 <label class="form-admin-label">Adresse email</label>
                 <input class="form-admin-input"
-                       type="email"
-                       name="email"
+                       type="email" name="email"
                        value="{{ old('email') }}"
                        placeholder="admin@kekeliwear.com"
-                       autocomplete="email"
-                       autofocus
-                       required />
+                       autocomplete="email" autofocus required />
             </div>
 
             <div class="form-admin-group" style="margin-bottom:20px">
                 <label class="form-admin-label">Mot de passe</label>
                 <input class="form-admin-input"
-                       type="password"
-                       name="password"
+                       type="password" name="password"
                        placeholder="••••••••"
-                       autocomplete="current-password"
-                       required />
+                       autocomplete="current-password" required />
             </div>
 
-            {{-- Se souvenir de moi --}}
-            <label class="check-label" style="margin-bottom:20px">
+            <label class="check-label" style="margin-bottom:24px">
                 <input type="checkbox" name="remember" value="1" />
                 <span>Rester connecté</span>
             </label>
 
-            <button type="submit" class="btn-admin-primary" style="width:100%;justify-content:center">
+            <button type="submit" class="btn-admin-primary"
+                    style="width:100%;justify-content:center;padding:13px">
                 Se connecter →
             </button>
 
         </form>
 
-        <div class="login-footer">
+        <div style="margin-top:28px;font-size:11px;color:#8A8A8A;text-align:center">
             © {{ date('Y') }} KEKELI WEAR — Accès réservé
         </div>
 
     </div>
+
+</div>
 
 </body>
 </html>

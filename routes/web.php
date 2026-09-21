@@ -14,7 +14,8 @@ use App\Http\Controllers\Admin\AdminController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::view('/view', 'view')->name('view');
 /*
 |--------------------------------------------------------------------------
 | API — Requêtes AJAX front (likes, vues, promo, panier, mensurations)
@@ -31,8 +32,9 @@ Route::prefix('api')->name('api.')->group(function () {
     Route::post('products/{id}/like',     [ApiController::class, 'toggleLike'])->name('products.like');
     Route::post('products/{id}/view',     [ApiController::class, 'trackView'])->name('products.view');
 
-    // Promo
+    // Promo — vérifier ET sauvegarder en session
     Route::post('promo/verify',           [ApiController::class, 'verifyPromo'])->name('promo.verify');
+    Route::delete('promo',                [ApiController::class, 'removePromo'])->name('promo.remove');
 
     // Mensurations — sauvegardées en BD avant envoi WhatsApp
     Route::post('measurements',           [ApiController::class, 'saveMeasurement'])->name('measurements.save');
