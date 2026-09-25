@@ -35,10 +35,10 @@
         <div class="nav-links">
             <a href="#hero"        class="nav-link active">Accueil</a>
             <a href="#advantages"   class="nav-link">Avantages</a>
-            <a href="#catalogue"   class="nav-link">Collections</a>
+            <a href="#catalogue"   class="nav-link">Nos créations</a>
             <a href="#featured"    class="nav-link">Tendances</a>
             <a href="#shop"        class="nav-link">Boutique</a>
-            <a href="#morphology"  class="nav-link">Mon profil</a>
+            <a href="#morphology"  class="nav-link">Espace client</a>
             <a href="#reviews"     class="nav-link">Avis</a>
             <a href="#contact"     class="nav-link">Contact</a>
             <a href="/about"       class="nav-link">À propos</a>
@@ -55,10 +55,10 @@
     <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer">✕</button>
     <a href="#hero"       onclick="closeMobileMenu()">Accueil</a>
     <a href="#advantages"  onclick="closeMobileMenu()">Avantages</a>
-    <a href="#catalogue"  onclick="closeMobileMenu()">Collections</a>
+    <a href="#catalogue"  onclick="closeMobileMenu()">Nos créations</a>
     <a href="#featured"   onclick="closeMobileMenu()">Tendances</a>
     <a href="#shop"       onclick="closeMobileMenu()">Boutique</a>
-    <a href="#morphology" onclick="closeMobileMenu()">Mon profil</a>
+    <a href="#morphology" onclick="closeMobileMenu()">Espace client</a>
     <a href="#reviews"    onclick="closeMobileMenu()">Avis</a>
     <a href="#contact"    onclick="closeMobileMenu()">Contact</a>
     <a href="#about"      onclick="closeMobileMenu()">À propos</a>

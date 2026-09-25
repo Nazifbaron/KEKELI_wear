@@ -93,16 +93,6 @@ function smoothScrollTo(id) {
 ============================================================ */
 document.addEventListener('DOMContentLoaded', function () {
 
-    /* --- Mobile menu --- */
-    var toggle = document.getElementById('nav-toggle');
-    var menu   = document.getElementById('mobile-menu');
-    if (toggle && menu) {
-        toggle.addEventListener('click', () => menu.classList.toggle('open'));
-        menu.querySelectorAll('a').forEach(a =>
-            a.addEventListener('click', () => menu.classList.remove('open'))
-        );
-    }
-
     /* --- Scroll spy navigation --- */
     var sections = ['hero','about','catalogue','featured','shop','morphology','reviews','contact'];
     window.addEventListener('scroll', function () {
