@@ -1,89 +1,68 @@
+{{-- checkout/layout.blade.php --}}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>KEKELI WEAR — @yield('title', 'Commande')</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+    <title>@yield('title', 'Commande') — KEKELI WEAR</title>
     <link rel="stylesheet" href="{{ asset('css/kekeli.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/checkout.css') }}" />
     @stack('styles')
 </head>
-<body class="checkout-body">
+<body class="ck-body">
 
-    {{-- ===== HEADER SIMPLIFIÉ ===== --}}
-    <header class="checkout-header">
-        <a href="{{ route('home') }}" class="checkout-logo">
-            <img src="{{ asset('images/logo.png') }}"
-                 alt="KEKELI WEAR"
-                 style="height:34px;width:auto" />
+    {{-- Barre de progression --}}
+    <header class="ck-header">
+        <a href="{{ route('home') }}" class="ck-logo">
+            KEKELI <span>WEAR</span>
         </a>
-        {{-- Étapes --}}
-        <div class="checkout-steps">
-            <div class="step {{ request()->routeIs('checkout.summary') ? 'active' : (request()->routeIs('checkout.confirmation') ? 'done' : '') }}">
-                <span class="step-num">1</span>
-                <span class="step-label">Récapitulatif</span>
+
+        <div class="ck-steps">
+            @php $step = View::yieldContent('step', 1); @endphp
+
+            <div class="ck-step {{ $step >= 1 ? 'done' : '' }} {{ $step == 1 ? 'active' : '' }}">
+                <div class="ck-step-dot">{{ $step > 1 ? '✓' : '1' }}</div>
+                <div class="ck-step-label">Panier</div>
             </div>
-            <div class="step-line"></div>
-            <div class="step {{ request()->routeIs('checkout.payment.gateway') ? 'active' : (request()->routeIs('checkout.confirmation') ? 'done' : '') }}">
-                <span class="step-num">2</span>
-                <span class="step-label">Paiement</span>
+
+            <div class="ck-step-line {{ $step >= 2 ? 'done' : '' }}"></div>
+
+            <div class="ck-step {{ $step >= 2 ? 'done' : '' }} {{ $step == 2 ? 'active' : '' }}">
+                <div class="ck-step-dot">{{ $step > 2 ? '✓' : '2' }}</div>
+                <div class="ck-step-label">Paiement</div>
             </div>
-            <div class="step-line"></div>
-            <div class="step {{ request()->routeIs('checkout.confirmation') ? 'active' : '' }}">
-                <span class="step-num">3</span>
-                <span class="step-label">Confirmation</span>
+
+            <div class="ck-step-line {{ $step >= 3 ? 'done' : '' }}"></div>
+
+            <div class="ck-step {{ $step >= 3 ? 'done' : '' }} {{ $step == 3 ? 'active' : '' }}">
+                <div class="ck-step-dot">{{ $step > 3 ? '✓' : '3' }}</div>
+                <div class="ck-step-label">Confirmation</div>
             </div>
         </div>
-        {{-- Lien retour --}}
-        <a href="{{ route('home') }}#shop" class="checkout-back">
-            ← Continuer mes achats
-        </a>
+
+        <a href="{{ route('boutique') }}" class="ck-back-link">← Boutique</a>
     </header>
 
-    {{-- ===== CONTENU ===== --}}
-    <main class="checkout-main">
-        @yield('content')
+    <main class="ck-main">
+        @if(session('success'))
+            <div class="ck-alert ck-alert-ok">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="ck-alert ck-alert-err">{{ session('error') }}</div>
+        @endif
+
+        @yield('checkout-content')
     </main>
 
-    {{-- ===== FOOTER MINIMAL ===== --}}
-    <footer class="checkout-footer">
-        <div>© {{ date('Y') }} KEKELI WEAR — Paiement sécurisé</div>
-        <div class="checkout-secure">
-            🔒 SSL · 💳 MTN MoMo · Moov Money · Carte bancaire
+    <footer class="ck-footer">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center">
+            <span>🔒 Paiement sécurisé KKiaPay</span>
+            <span style="opacity:.3">·</span>
+            <span>KEKELI WEAR · Sèmé-Kpodji, Cotonou</span>
         </div>
     </footer>
 
-    <div class="toast" id="toast"></div>
-
-    <script>
-        var CSRF = document.querySelector('meta[name="csrf-token"]')?.content || '';
-
-        function apiPost(url, data) {
-            return fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': CSRF,
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify(data),
-            }).then(r => r.json());
-        }
-
-        var toastTimer;
-        function showToast(msg, type) {
-            var t = document.getElementById('toast');
-            if (!t) return;
-            t.textContent = msg;
-            t.className   = 'toast show' + (type === 'err' ? ' toast-err' : '');
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
-        }
-    </script>
     @stack('scripts')
 </body>
 </html>

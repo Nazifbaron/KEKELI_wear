@@ -1,205 +1,138 @@
-{{-- ============================================================
-     checkout/payment.blade.php
-     Étape 2 — Paiement via FedaPay.
-     FedaPay est la passerelle la plus utilisée en Afrique
-     de l'Ouest — supporte MTN MoMo, Moov Money, carte.
-     Le SDK JS FedaPay est chargé dynamiquement.
-     En mode sandbox (test) : aucune vraie transaction.
-     En mode live : remplacer la clé publique dans .env.
-============================================================ --}}
+{{-- checkout/payment.blade.php — Paiement KKiaPay --}}
 @extends('checkout.layout')
+@section('step', 2)
 @section('title', 'Paiement')
 
-@section('content')
+@section('checkout-content')
 
-<div class="payment-page">
+<div style="max-width:520px;margin:0 auto">
 
-    <div class="checkout-card payment-card-main">
-
-        {{-- Icône sécurité --}}
-        <div style="text-align:center;margin-bottom:28px">
-            <div style="font-size:48px;margin-bottom:12px">🔒</div>
-            <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:6px">
-                Paiement sécurisé
+    {{-- Récap commande --}}
+    <div class="ck-recap-card">
+        <div class="ck-recap-ref">
+            Commande <strong>{{ $ref }}</strong>
+        </div>
+        <div class="ck-recap-amount">
+            <span>Total à payer</span>
+            <span class="ck-recap-total" id="recap-total">
+                {{ number_format($order->total, 0, ',', ' ') }} XOF
+            </span>
+        </div>
+        @if($order->discount_amount > 0)
+            <div style="font-size:11px;color:var(--ck-soft);text-align:right;margin-top:4px">
+                Dont {{ number_format($order->discount_amount, 0, ',', ' ') }} XOF de remise appliquée
             </div>
-            <div style="font-size:13px;color:var(--kgray)">
-                Référence commande : <strong style="color:var(--kgold)">{{ $ref }}</strong>
+        @endif
+    </div>
+
+    {{-- Choisir le mode de paiement --}}
+    <div class="ck-section-title" style="margin-bottom:16px">Finaliser le paiement</div>
+
+    <div class="ck-pay-options">
+
+        @if($order->payment_method !== 'whatsapp')
+        {{-- Payer via KKiaPay --}}
+        <div class="ck-pay-option" onclick="payWithKkiapay()">
+            <div class="ck-pay-icon">💳</div>
+            <div class="ck-pay-info">
+                <div class="ck-pay-name">Payer maintenant via KKiaPay</div>
+                <div class="ck-pay-sub">MTN MoMo · Moov Money · Carte bancaire</div>
+            </div>
+            <div class="ck-pay-arrow">→</div>
+        </div>
+        @endif
+
+        {{-- Commande WhatsApp --}}
+        <div class="ck-pay-option ck-pay-wa" onclick="payViaWhatsapp()">
+            <div class="ck-pay-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="#25D366">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                </svg>
+            </div>
+            <div class="ck-pay-info">
+                <div class="ck-pay-name">Commander via WhatsApp</div>
+                <div class="ck-pay-sub">Paiement à la livraison ou arrangement direct</div>
+            </div>
+            <div class="ck-pay-arrow">→</div>
+        </div>
+
+    </div>
+
+    {{-- Sécurité --}}
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;
+                margin-top:24px;padding:14px;background:var(--ck-cream);
+                border-radius:6px;border:1px solid var(--ck-border)">
+        <span style="font-size:20px">🔒</span>
+        <div>
+            <div style="font-size:11px;font-weight:700;color:var(--ck-black)">Paiement sécurisé KKiaPay</div>
+            <div style="font-size:10px;color:var(--ck-soft)">
+                Vos données bancaires ne transitent jamais par nos serveurs
             </div>
         </div>
-
-        {{-- Récap montant --}}
-        <div class="payment-amount-box" id="payment-amount-box">
-            <div style="font-size:12px;color:var(--kgray);margin-bottom:4px">Montant à régler</div>
-            <div style="font-size:32px;font-weight:700;color:var(--kgold)" id="payment-amount">
-                Chargement...
-            </div>
-        </div>
-
-        {{-- Bouton de paiement FedaPay --}}
-        <button class="btn-fedapay" id="btn-fedapay" onclick="initFedaPay()">
-            💳 Payer maintenant
-        </button>
-
-        {{-- Méthodes acceptées --}}
-        <div class="payment-methods-logos">
-            <span class="pm-logo pm-mtn">MTN MoMo</span>
-            <span class="pm-logo pm-moov">Moov Money</span>
-            <span class="pm-logo pm-card">Visa / MC</span>
-        </div>
-
-        {{-- Message d'état --}}
-        <div id="payment-status" style="display:none"></div>
-
-        {{-- Lien retour --}}
-        <div style="text-align:center;margin-top:20px">
-            <a href="{{ route('checkout.summary') }}"
-               style="font-size:12px;color:var(--kgray);text-decoration:none">
-                ← Modifier ma commande
-            </a>
-        </div>
-
     </div>
 
 </div>
 
 @endsection
 
-@push('styles')
-<style>
-.payment-page        { display:flex; align-items:center; justify-content:center; min-height:60vh; padding:24px; }
-.payment-card-main   { max-width:440px; width:100%; padding:40px; }
-.payment-amount-box  { background:rgba(237,197,48,.08); border:1px solid rgba(237,197,48,.2); border-radius:6px; padding:20px; text-align:center; margin-bottom:28px; }
-.btn-fedapay         { width:100%; background:var(--kred); color:#fff; border:none; padding:15px; font-size:13px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; cursor:pointer; border-radius:4px; transition:all .2s; margin-bottom:16px; }
-.btn-fedapay:hover   { background:#c01f20; }
-.btn-fedapay:disabled { opacity:.5; cursor:not-allowed; }
-.payment-methods-logos { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:20px; }
-.pm-logo   { font-size:10px; font-weight:700; padding:4px 10px; border-radius:3px; letter-spacing:.08em; }
-.pm-mtn    { background:rgba(255,200,0,.15); color:#ffc800; border:1px solid rgba(255,200,0,.3); }
-.pm-moov   { background:rgba(0,120,215,.15); color:#4fa8ff; border:1px solid rgba(0,120,215,.3); }
-.pm-card   { background:rgba(255,255,255,.06); color:#aaa; border:1px solid rgba(255,255,255,.1); }
-.payment-status-ok  { background:rgba(76,175,80,.1); border:1px solid rgba(76,175,80,.3); border-left:3px solid #4caf50; border-radius:4px; padding:14px 16px; font-size:13px; color:#a5d6a7; text-align:center; margin-top:16px; }
-.payment-status-err { background:rgba(228,40,41,.1); border:1px solid rgba(228,40,41,.3); border-left:3px solid var(--kred); border-radius:4px; padding:14px 16px; font-size:13px; color:#ef9a9a; text-align:center; margin-top:16px; }
-</style>
-@endpush
-
 @push('scripts')
-{{-- SDK FedaPay — chargé depuis leur CDN --}}
-<script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
-
+{{-- SDK KKiaPay --}}
+<script src="https://cdn.kkiapay.me/k.js"></script>
 <script>
 var ORDER_REF = '{{ $ref }}';
-var orderData = null;
+var AMOUNT    = {{ $order->total }};
+var CUSTOMER  = '{{ addslashes($order->customer_name) }}';
+var CSRF      = document.querySelector('meta[name="csrf-token"]')?.content;
 
-/*
-|----------------------------------------------------------
-| Au chargement — récupérer les infos de la commande
-| depuis l'API pour afficher le montant et initialiser FedaPay
-|----------------------------------------------------------
-*/
-document.addEventListener('DOMContentLoaded', function () {
-    fetch('/api/order/' + ORDER_REF, {
-        headers: { 'Accept': 'application/json' }
-    })
-    .then(r => r.json())
-    .then(data => {
-        orderData = data;
-        var amountEl = document.getElementById('payment-amount');
-        if (amountEl && data.total) {
-            amountEl.textContent =
-                parseInt(data.total).toLocaleString('fr-FR') + ' XOF';
-        }
-    })
-    .catch(() => {
-        // Fallback si l'API est indisponible
-        document.getElementById('payment-amount').textContent = 'Voir la confirmation';
+function payWithKkiapay() {
+    openKkiapayWidget({
+        amount:   AMOUNT,
+        name:     CUSTOMER,
+        callback: handlePaymentSuccess,
+        theme:    '#e42829',
+        sandbox:  '{{ config("kekeli.kkiapay_env") }}' === 'sandbox',
+        key:      '{{ config("kekeli.kkiapay_public_key") }}',
     });
-});
-
-/*
-|----------------------------------------------------------
-| Initialiser le widget FedaPay
-| Documentation : https://docs.fedapay.com/checkout
-|
-| En mode TEST  → clé pk_sandbox_xxx (aucune vraie transaction)
-| En mode LIVE  → clé pk_live_xxx (transactions réelles)
-| La clé est injectée depuis config/kekeli.php → .env
-|----------------------------------------------------------
-*/
-function initFedaPay() {
-    var btn = document.getElementById('btn-fedapay');
-    btn.disabled = true;
-    btn.textContent = 'Connexion au service de paiement...';
-
-    FedaPay.init({
-        /*
-        | Clé publique FedaPay — configurer dans .env :
-        | FEDAPAY_PUBLIC_KEY=pk_sandbox_xxx  (test)
-        | FEDAPAY_PUBLIC_KEY=pk_live_xxx     (production)
-        */
-        public_key: '{{ config("kekeli.fedapay_public_key", "pk_sandbox_xxx") }}',
-        environment: '{{ config("kekeli.fedapay_env", "sandbox") }}',
-
-        transaction: {
-            amount:      orderData?.total   || 0,
-            description: 'Commande KEKELI WEAR — ' + ORDER_REF,
-        },
-        customer: {
-            firstname: orderData?.customer_name?.split(' ')[0] || '',
-            lastname:  orderData?.customer_name?.split(' ').slice(1).join(' ') || '',
-            email:     orderData?.customer_email || 'client@kekeliwear.com',
-            phone_number: {
-                number:  orderData?.customer_phone || '',
-                country: 'BJ',
-            },
-        },
-
-        /*
-        |----------------------------------------------------------
-        | Callbacks FedaPay
-        |----------------------------------------------------------
-        */
-        onComplete: function(response) {
-            if (response.reason === FedaPay.DIALOG_DISMISSED) {
-                // Client a fermé sans payer
-                btn.disabled  = false;
-                btn.textContent = '💳 Réessayer le paiement';
-                showStatus('Paiement annulé. Vous pouvez réessayer.', 'err');
-                return;
-            }
-
-            if (response.reason === FedaPay.CHECKOUT_COMPLETED) {
-                var transaction = response.transaction;
-
-                // Notifier le backend du succès
-                apiPost('/checkout/payment/' + ORDER_REF + '/callback', {
-                    status:         'SUCCESS',
-                    transaction_id: transaction.id,
-                    reference:      ORDER_REF,
-                })
-                .then(() => {
-                    // Rediriger vers la page de confirmation
-                    window.location.href = '/checkout/confirmation/' + ORDER_REF;
-                })
-                .catch(() => {
-                    // Paiement ok mais erreur callback → quand même rediriger
-                    window.location.href = '/checkout/confirmation/' + ORDER_REF;
-                });
-            }
-        },
-    }).open();
-
-    // Réactiver le bouton après 3s si le widget ne s'ouvre pas
-    setTimeout(() => {
-        btn.disabled    = false;
-        btn.textContent = '💳 Payer maintenant';
-    }, 3000);
 }
 
-function showStatus(msg, type) {
-    var el = document.getElementById('payment-status');
-    el.style.display = 'block';
-    el.className     = type === 'err' ? 'payment-status-err' : 'payment-status-ok';
-    el.textContent   = msg;
+function handlePaymentSuccess(response) {
+    /* Vérification côté serveur + mise à jour de la commande */
+    fetch('/checkout/payment/' + ORDER_REF + '/callback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': CSRF,
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+            transaction_id: response.transactionId,
+            status: response.status,
+        }),
+    })
+    .then(r => r.json())
+    .then(function(d) {
+        if (d.success) {
+            window.location.href = '/checkout/confirmation/' + ORDER_REF;
+        } else {
+            alert('Paiement non confirmé. Contactez-nous sur WhatsApp si vous avez été débité.');
+        }
+    });
+}
+
+function payViaWhatsapp() {
+    fetch('/api/order/' + ORDER_REF, { headers: { 'Accept': 'application/json' } })
+    .then(r => r.json())
+    .then(function(d) {
+        var msg = '🛍 *Commande KEKELI WEAR*\n\n'
+                + 'Réf : *' + d.reference + '*\n'
+                + 'Client : ' + d.customer_name + '\n'
+                + 'Téléphone : ' + d.customer_phone + '\n'
+                + 'Ville : ' + d.delivery_city + '\n'
+                + 'Total : *' + parseInt(d.total).toLocaleString('fr-FR') + ' XOF*\n\n'
+                + 'Je souhaite confirmer cette commande.';
+        window.open('https://wa.me/{{ config("kekeli.whatsapp") }}?text=' + encodeURIComponent(msg), '_blank');
+        window.location.href = '/checkout/confirmation/' + ORDER_REF;
+    });
 }
 </script>
 @endpush

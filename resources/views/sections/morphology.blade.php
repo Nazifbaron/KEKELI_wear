@@ -25,10 +25,10 @@
                     {{-- Sablier --}}
                     <div class="morpho-tab active"
                          onclick="selectMorpho(this,'hourglass',
-                         'Coupes cintrées et ceintures signature ✦ - Privilégiez les robes ajustées qui marquent la taille. Univers recommandé : Tenues Réinventées & Accessoires.')">
+                         'Coupes cintrées et ceintures signature ✦ - Privilégiez les robes ajustées qui marquent la taille.')">
                         <div class="morpho-icon">⌛</div>
                         <div>
-                            <div class="morpho-tab-name">Sablier</div>
+                            <div class="morpho-tab-name">Sablier ou morphologie en X</div>
                             <div class="morpho-tab-tip">Épaules et hanches équilibrées, taille marquée. Nos coupes cintrées et ceintures signature soulignent naturellement votre silhouette.</div>
                         </div>
                     </div>
@@ -36,10 +36,10 @@
                     {{-- Triangle inversé --}}
                     <div class="morpho-tab"
                          onclick="selectMorpho(this,'inverted-triangle',
-                         'Jupes évasées et bas imprimés - Équilibrez vos épaules larges avec des jupes wax volumineuses. Univers recommandé : Tenues Réinventées.')">
+                         'Jupes évasées et bas imprimés - Équilibrez vos épaules larges avec des jupes wax volumineuses.')">
                         <div class="morpho-icon">🔺</div>
                         <div>
-                            <div class="morpho-tab-name">Triangle inversé</div>
+                            <div class="morpho-tab-name">Triangle inversé ou morphologie en V</div>
                             <div class="morpho-tab-tip">Épaules plus larges que les hanches. Les jupes évasées et bas imprimés de nos Tenues Réinventées rééquilibrent la silhouette avec élégance.</div>
                         </div>
                     </div>
@@ -47,10 +47,10 @@
                     {{-- Poire --}}
                     <div class="morpho-tab"
                          onclick="selectMorpho(this,'pear',
-                         'Hauts à volants et détails d\'épaule - Magnifiez le buste avec des bretelles et cols structurés. Univers recommandé : Confections Maison.')">
+                         'Hauts à volants et détails d\'épaule - Magnifiez le buste avec des bretelles et cols structurés.')">
                         <div class="morpho-icon">🍐</div>
                         <div>
-                            <div class="morpho-tab-name">Poire</div>
+                            <div class="morpho-tab-name">Poire ou morphologie en A</div>
                             <div class="morpho-tab-tip">Hanches plus marquées que le buste. Les hauts à volants et détails d'épaule attirent le regard vers le haut avec grâce.</div>
                         </div>
                     </div>
@@ -58,10 +58,10 @@
                     {{-- Ronde --}}
                     <div class="morpho-tab"
                          onclick="selectMorpho(this,'round',
-                         'Robes fluides et tuniques kaftan - Les tombés souples et lignes verticales subliment votre silhouette. Univers recommandé : Confections Maison.')">
+                         'Robes fluides et tuniques kaftan - Les tombés souples et lignes verticales subliment votre silhouette.')">
                         <div class="morpho-icon">🍎</div>
                         <div>
-                            <div class="morpho-tab-name">Ronde / Pomme</div>
+                            <div class="morpho-tab-name">Ronde / Pomme ou morphologie en O</div>
                             <div class="morpho-tab-tip">Buste et taille arrondis. Les robes fluides et tuniques kaftan de nos Confections Maison offrent un confort chic et enveloppant.</div>
                         </div>
                     </div>

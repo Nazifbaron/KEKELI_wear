@@ -16,19 +16,14 @@ return [
     | Numéro WhatsApp principal de la boutique
     */
     'whatsapp' => env('KEKELI_WHATSAPP', '2290140134949'),
-
     /*
-    | Passerelle de paiement (fedapay | cinetpay | none)
+    | Numéro WhatsApp secondaire de la boutique (optionnel)
     */
+    'whatsapp_secondary' => env('KEKELI_WHATSAPP_SECONDARY', '2290000000000'),
     'payment_gateway' => env('KEKELI_PAYMENT_GATEWAY', 'none'),
-    /*
-    | Passerelle de paiement FedaPay
-    | Documentation : https://docs.fedapay.com
-    | Modes : sandbox (test) | live (production)
-    | Clé publique → injectée dans le widget JS frontend
-    | Clé secrète  → utilisée côté serveur pour vérifier les transactions
-    */
-    'fedapay_env'        => env('FEDAPAY_ENV', 'sandbox'),
-    'fedapay_public_key' => env('FEDAPAY_PUBLIC_KEY', 'pk_sandbox_xxx'),
-    'fedapay_secret_key' => env('FEDAPAY_SECRET_KEY', 'sk_sandbox_xxx'),
+    'kkiapay_env'        => env('KKIAPAY_ENV', 'sandbox'),
+    'kkiapay_public_key' => env('KKIAPAY_PUBLIC_KEY', ''),
+    'kkiapay_private_key'=> env('KKIAPAY_PRIVATE_KEY', ''),
 ];
+
+

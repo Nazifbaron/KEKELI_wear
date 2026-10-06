@@ -28,18 +28,22 @@
         <div class="fav-wrapper">
             <div class="fav-track" id="fav-track">
                 @forelse($featured as $product)
-                <div class="fav-card">
+                <div class="fav-card" data-category-id="{{ $product->category_id }}">
                     {{-- Image produit --}}
                     <div class="fav-img"
                          style="{{ !$product->main_image
                             ? 'background:linear-gradient(145deg,#1a1a1a,#2a1a0a)'
                             : '' }}">
-
-                        @if($product->main_image)
-                            <img src="{{ asset('storage/' . $product->main_image) }}"
-                                 alt="{{ $product->name }}"
-                                 loading="lazy" />
-                        @endif
+                        <a class="fav-image-link" href="{{ route('product.show', $product->slug) }}" aria-label="Découvrir {{ $product->name }}">
+                            @if($product->main_image)
+                                <img src="{{ asset('storage/' . $product->main_image) }}"
+                                     alt="{{ $product->name }}"
+                                     loading="lazy" />
+                            @else
+                                <span class="prod-image-placeholder">✦</span>
+                            @endif
+                            <span class="prod-image-discover">Découvrir la pièce <span aria-hidden="true">↗</span></span>
+                        </a>
 
                         {{-- Badges --}}
                         <div class="fav-badges">
@@ -72,30 +76,14 @@
 
                     {{-- Infos produit --}}
                     <div class="fav-info">
-                        <div class="fav-univers">{{ $product->category->name }}</div>
-                        <div class="fav-title">{{ $product->name }}</div>
-                        <div class="fav-footer">
-                            <div class="fav-price">{{ $product->formatted_price }}</div>
-
-                            @if($product->is_custom)
-                                {{-- Sur-mesure → rediriger vers mensurations --}}
-                                <button class="btn-cart"
-                                        onclick="smoothScrollTo('morphology')"
-                                        style="font-size:9px">
-                                    Mes mesures →
-                                </button>
-                            @else
-                                {{-- Produit standard → ajouter au panier --}}
-                                <button class="btn-cart"
-                                        onclick="addToCartApi(
-                                            {{ $product->id }},
-                                            '{{ addslashes($product->name) }}',
-                                            '{{ $product->formatted_price }}'
-                                        )">
-                                    + Panier
-                                </button>
-                            @endif
-                        </div>
+                        <a class="fav-info-link" href="{{ route('product.show', $product->slug) }}">
+                            <div class="fav-univers">{{ $product->category->name }}</div>
+                            <div class="fav-title">{{ $product->name }}</div>
+                            <div class="fav-footer">
+                                @include('products.partials.price', ['product' => $product, 'priceClass' => 'fav-price'])
+                                <span class="prod-card-arrow" aria-hidden="true">↗</span>
+                            </div>
+                        </a>
                     </div>
 
                 </div>{{-- /fav-card --}}

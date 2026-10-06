@@ -7,13 +7,17 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\GiftVoucherController;
 
 /*
 |--------------------------------------------------------------------------
 | FRONT — One-page principale
 |--------------------------------------------------------------------------
 */
+Route::get('/bon', [GiftVoucherController::class, 'index'])->name('bon');
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/boutique', [\App\Http\Controllers\ProductController::class, 'index'])->name('boutique');
+Route::get('/produit/{slug}', [\App\Http\Controllers\ProductController::class, 'show'])->name('product.show');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::view('/view', 'view')->name('view');
 /*
@@ -66,26 +70,31 @@ Route::prefix('checkout')->name('checkout.')->group(function () {
     | GET  → afficher la vue summary
     | POST → créer la commande en BD
     */
-    Route::get ('summary',                    [CheckoutController::class, 'summary'])->name('summary');
-    Route::post('/',                          [CheckoutController::class, 'store'])->name('store');
+    Route::get('summary', [
+        \App\Http\Controllers\CheckoutController::class,
+        'summary'
+    ])->name('summary');
 
-    /*
-    | Étape 2 — Page de paiement FedaPay
-    | Le widget JS FedaPay est chargé sur cette page
-    */
-    Route::get ('payment/{ref}',              [CheckoutController::class, 'paymentPage'])->name('payment.gateway');
+    Route::post('/', [
+        \App\Http\Controllers\CheckoutController::class,
+        'store'
+    ])->name('store');
 
-    /*
-    | Callback paiement — appelé par le widget JS FedaPay
-    | après succès ou échec du paiement
-    */
-    Route::post('payment/{ref}/callback',     [CheckoutController::class, 'paymentCallback'])->name('payment.callback');
+    Route::get('payment/{ref}', [
+        \App\Http\Controllers\CheckoutController::class,
+        'paymentPage'
+    ])->name('payment.gateway');
 
-    /*
-    | Étape 3 — Page de confirmation
-    | Affichée après paiement réussi ou commande WhatsApp
-    */
-    Route::get ('confirmation/{ref}',         [CheckoutController::class, 'confirmation'])->name('confirmation');
+    Route::post('payment/{ref}/callback', [
+        \App\Http\Controllers\CheckoutController::class,
+        'paymentCallback'
+    ])->name('payment.callback');
+
+    Route::get('confirmation/{ref}', [
+        \App\Http\Controllers\CheckoutController::class,
+        'confirmation'
+    ])->name('confirmation');
+
 });
 
 /*
@@ -111,6 +120,12 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(func
     // Catégories
     Route::get('categories',                          [AdminController::class, 'categories'])->name('categories');
     Route::put('categories/{category}',               [AdminController::class, 'updateCategory'])->name('categories.update');
+    // Univers / Catégories — CRUD complet
+    Route::get   ('categories',               [\App\Http\Controllers\Admin\CategoryController::class, 'index'])  ->name('categories');
+    Route::post  ('categories',               [\App\Http\Controllers\Admin\CategoryController::class, 'store'])  ->name('categories.store');
+    Route::put   ('categories/{category}',    [\App\Http\Controllers\Admin\CategoryController::class, 'update']) ->name('categories.update');
+    Route::patch ('categories/{category}/toggle', [\App\Http\Controllers\Admin\CategoryController::class, 'toggle']) ->name('categories.toggle');
+    Route::delete('categories/{category}',    [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('categories.destroy');
 
     // Produits
     Route::get   ('products',                         [AdminController::class, 'products'])->name('products');
@@ -120,12 +135,12 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(func
     Route::put   ('products/{product}',               [AdminController::class, 'updateProduct'])->name('products.update');
     Route::delete('products/{product}',               [AdminController::class, 'destroyProduct'])->name('products.destroy');
 
-    // Hero slides
-    Route::get   ('hero-slides',                      [AdminController::class, 'heroSlides'])->name('hero-slides');
-    Route::post  ('hero-slides',                      [AdminController::class, 'storeHeroSlide'])->name('hero-slides.store');
-    Route::put   ('hero-slides/{slide}',              [AdminController::class, 'updateHeroSlide'])->name('hero-slides.update');
-    Route::delete('hero-slides/{slide}',              [AdminController::class, 'destroyHeroSlide'])->name('hero-slides.destroy');
-    Route::patch ('hero-slides/{slide}/toggle',       [AdminController::class, 'toggleHeroSlide'])->name('hero-slides.toggle');
+    // Hero slides — CRUD complet (ajouter update qui manquait)
+    Route::get   ('hero-slides',                   [\App\Http\Controllers\Admin\HeroSlideController::class, 'index'])  ->name('hero-slides');
+    Route::post  ('hero-slides',                   [\App\Http\Controllers\Admin\HeroSlideController::class, 'store'])  ->name('hero-slides.store');
+    Route::put   ('hero-slides/{slide}',           [\App\Http\Controllers\Admin\HeroSlideController::class, 'update']) ->name('hero-slides.update');
+    Route::patch ('hero-slides/{slide}/toggle',    [\App\Http\Controllers\Admin\HeroSlideController::class, 'toggle']) ->name('hero-slides.toggle');
+    Route::delete('hero-slides/{slide}',           [\App\Http\Controllers\Admin\HeroSlideController::class, 'destroy'])->name('hero-slides.destroy');
 
     // Commandes
     Route::get  ('orders',                            [AdminController::class, 'orders'])->name('orders');
@@ -137,6 +152,20 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(func
     Route::post ('promo-codes',                       [AdminController::class, 'storePromoCode'])->name('promo-codes.store');
     Route::patch('promo-codes/{promo}/toggle',        [AdminController::class, 'togglePromoCode'])->name('promo-codes.toggle');
 
+    /* ---- Routes front bons d'achat ---- */
+    Route::get ('bons-dachat',                  [\App\Http\Controllers\GiftVoucherController::class, 'index'])        ->name('vouchers.index');
+    Route::post('bons-dachat',                  [\App\Http\Controllers\GiftVoucherController::class, 'store'])        ->name('vouchers.store');
+    Route::get ('bons-dachat/confirmation/{code}', [\App\Http\Controllers\GiftVoucherController::class, 'confirmation'])->name('vouchers.confirmation');
+
+    /* ---- Routes API voucher (dans le groupe /api) ---- */
+    Route::post  ('voucher/verify',  [\App\Http\Controllers\ApiController::class, 'verifyVoucher']) ->name('api.voucher.verify');
+    Route::delete('voucher',         [\App\Http\Controllers\ApiController::class, 'removeVoucher']) ->name('api.voucher.remove');
+
+    /* ---- Routes admin bons d'achat (dans le groupe /admin protégé) ---- */
+    Route::get  ('vouchers',                  [\App\Http\Controllers\Admin\VoucherController::class, 'index'])  ->name('vouchers');
+    Route::post ('vouchers',                  [\App\Http\Controllers\Admin\VoucherController::class, 'store'])  ->name('vouchers.store');
+    Route::patch('vouchers/{voucher}/cancel', [\App\Http\Controllers\Admin\VoucherController::class, 'cancel']) ->name('vouchers.cancel');
+
     // Mensurations
     Route::get  ('measurements',                      [AdminController::class, 'measurements'])->name('measurements');
     Route::patch('measurements/{measurement}/status', [AdminController::class, 'updateMeasurementStatus'])->name('measurements.status');
@@ -144,4 +173,12 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(func
     // Avis
     Route::get  ('reviews',                           [AdminController::class, 'reviews'])->name('reviews');
     Route::patch('reviews/{review}/approve',          [AdminController::class, 'approveReview'])->name('reviews.approve');
+    Route::delete('reviews/{review}',                 [AdminController::class, 'destroyReview'])->name('reviews.destroy');
+
+    Route::post('products/{product}/images', [\App\Http\Controllers\Admin\ProductImageController::class, 'upload'])
+     ->name('products.images.upload');
+    Route::delete('products/images/{image}', [\App\Http\Controllers\Admin\ProductImageController::class, 'delete'])
+     ->name('products.image.delete');
 });
+
+

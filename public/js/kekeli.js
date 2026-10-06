@@ -33,14 +33,20 @@ function apiPost(url, data) {
             'Accept':        'application/json',
         },
         body: JSON.stringify(data),
-    }).then(r => r.json());
+    }).then(r => r.json().then(data => {
+        if (!r.ok) throw Object.assign(new Error(data.message || 'La requête a échoué.'), { data, status: r.status });
+        return data;
+    }));
 }
 
 /* GET vers l'API Laravel */
 function apiGet(url) {
     return fetch(url, {
         headers: { 'Accept': 'application/json' },
-    }).then(r => r.json());
+    }).then(r => r.json().then(data => {
+        if (!r.ok) throw Object.assign(new Error(data.message || 'La requête a échoué.'), { data, status: r.status });
+        return data;
+    }));
 }
 
 /* DELETE vers l'API Laravel */
@@ -51,7 +57,10 @@ function apiDelete(url) {
             'X-CSRF-TOKEN': CSRF,
             'Accept':       'application/json',
         },
-    }).then(r => r.json());
+    }).then(r => r.json().then(data => {
+        if (!r.ok) throw Object.assign(new Error(data.message || 'La requête a échoué.'), { data, status: r.status });
+        return data;
+    }));
 }
 
 /* PATCH vers l'API Laravel */
@@ -139,24 +148,29 @@ document.addEventListener('DOMContentLoaded', function () {
    window.TOTAL_SLIDES = {{ $slides->count() ?? 3 }}
 ============================================================ */
 var currentSlide = 0;
-var totalSlides  = window.TOTAL_SLIDES || 3;
+var heroSlides   = document.querySelectorAll('#hero .slide');
+var heroDots     = document.querySelectorAll('#carousel-dots .cdot');
+var totalSlides  = heroSlides.length || Number(window.TOTAL_SLIDES) || 3;
 var slideTimer;
 
 function goSlide(n) {
-    document.querySelectorAll('.slide').forEach((s, i) =>
-        s.classList.toggle('hidden', i !== n)
+    if (!heroSlides.length) return;
+    currentSlide = ((n % heroSlides.length) + heroSlides.length) % heroSlides.length;
+    heroSlides.forEach((s, i) =>
+        s.classList.toggle('hidden', i !== currentSlide)
     );
-    document.querySelectorAll('.cdot').forEach((d, i) =>
-        d.classList.toggle('active', i === n)
+    heroDots.forEach((d, i) =>
+        d.classList.toggle('active', i === currentSlide)
     );
-    currentSlide = n;
 }
 
 function nextSlide() { goSlide((currentSlide + 1) % totalSlides); }
 function prevSlide() { goSlide((currentSlide - 1 + totalSlides) % totalSlides); }
 
 /* Auto-play 5 secondes */
-slideTimer = setInterval(nextSlide, 5000);
+if (heroSlides.length > 1) {
+    slideTimer = setInterval(nextSlide, 5000);
+}
 
 /* ============================================================
    FILTRE CATALOGUE + BOUTIQUE
@@ -165,6 +179,15 @@ slideTimer = setInterval(nextSlide, 5000);
 var currentCat = 'all';
 
 function filterByCategory(cat, btn) {
+    /* Depuis l'accueil, les catégories ouvrent le catalogue complet filtré. */
+    if (!document.querySelector('.catalogue-page')) {
+        var catalogueBase = document.querySelector('meta[name="catalogue-url"]')?.content || '/boutique';
+        var catalogueUrl = new URL(catalogueBase, window.location.href);
+        if (cat && cat !== 'all') catalogueUrl.searchParams.set('cat', cat);
+        window.location.assign(catalogueUrl.toString());
+        return;
+    }
+
     currentCat = cat;
 
     /* Afficher / masquer les produits */
@@ -249,8 +272,15 @@ function verifyPromo() {
         .then(data => {
             if (data.valid) {
                 activePromo = data;
-                if (okEl) { okEl.textContent = '✓ ' + data.message; okEl.style.display = 'inline'; }
-                applyDiscount(data);
+                var discountedCount = applyDiscount(data);
+                if (okEl) {
+                    okEl.textContent = '✓ ' + data.code + ' appliqué — ' + data.label + ' · ' + data.scope
+                        + (discountedCount ? ' · prix réduits affichés sur ' + discountedCount + ' produit(s).' : ' · valable sur les articles éligibles de votre panier.');
+                    okEl.style.display = 'inline';
+                }
+                var removeBtn = document.getElementById('promo-remove');
+                if (removeBtn) removeBtn.style.display = 'inline-flex';
+                loadCart();
                 showToast('Code ' + code + ' appliqué — ' + data.label);
             } else {
                 if (errEl) {
@@ -260,26 +290,56 @@ function verifyPromo() {
                 setTimeout(() => { if (errEl) errEl.style.display = 'none'; }, 2500);
             }
         })
-        .catch(() => showToast('Erreur lors de la vérification', 'err'));
+        .catch(error => {
+            var message = error.data?.message || error.message || 'Erreur lors de la vérification.';
+            if (errEl) { errEl.textContent = '✗ ' + message; errEl.style.display = 'inline'; }
+            showToast(message, 'err');
+        });
 }
 
 function applyDiscount(promo) {
-    /* Afficher les prix barrés + prix réduits sur tous les produits */
-    document.querySelectorAll('.prod-price[data-base]').forEach(el => {
+    var discountedCount = 0;
+    document.querySelectorAll('.prod-price[data-base], .fav-price[data-base]').forEach(el => {
+        var promoEl = el.nextElementSibling;
+        el.classList.remove('striked');
+        if (promoEl && promoEl.classList.contains('prod-price-promo')) {
+            promoEl.textContent = '';
+            promoEl.style.display = 'none';
+        }
+        if (!promo) return;
+
+        var categoryId = el.closest('.prod-card, .fav-card')?.dataset.categoryId;
+        if (promo.category_id && String(categoryId) !== String(promo.category_id)) return;
+
         var base = parseFloat(el.dataset.base);
-        if (!base) return;
+        if (!base || !promoEl || !promoEl.classList.contains('prod-price-promo')) return;
 
         var reduced = promo.type === 'percentage'
             ? Math.round(base * (1 - promo.discount / 100))
             : Math.max(0, base - promo.discount);
+        if (reduced >= base) return;
 
         el.classList.add('striked');
-        var promoEl = el.nextElementSibling;
-        if (promoEl && promoEl.classList.contains('prod-price-promo')) {
-            promoEl.textContent = reduced.toLocaleString('fr-FR') + ' XOF';
-            promoEl.style.display = 'inline';
-        }
+        promoEl.textContent = reduced.toLocaleString('fr-FR') + ' XOF';
+        promoEl.style.display = 'inline';
+        discountedCount++;
     });
+    return discountedCount;
+}
+
+function removePromo() {
+    apiDelete('/api/promo')
+        .then(() => {
+            activePromo = null;
+            applyDiscount(null);
+            var okEl = document.getElementById('promo-ok');
+            var removeBtn = document.getElementById('promo-remove');
+            if (okEl) okEl.style.display = 'none';
+            if (removeBtn) removeBtn.style.display = 'none';
+            loadCart();
+            showToast('Code promo retiré.');
+        })
+        .catch(() => showToast('Impossible de retirer le code promo.', 'err'));
 }
 
 /* ============================================================
@@ -290,28 +350,41 @@ var cartItems = [];
 
 /* Charger le panier depuis la BD */
 function loadCart() {
-    apiGet('/api/cart')
+    return apiGet('/api/cart')
         .then(data => {
             cartItems = data.items || [];
             renderCart(cartItems, data.total || 0, data.amount || 0);
+            activePromo = data.promo || null;
+            var discountedCount = applyDiscount(activePromo);
+            var okEl = document.getElementById('promo-ok');
+            var removeBtn = document.getElementById('promo-remove');
+            if (activePromo && okEl) {
+                okEl.textContent = '✓ ' + activePromo.code + ' appliqué — ' + activePromo.label + ' · ' + activePromo.scope
+                    + (discountedCount ? ' · prix réduits affichés sur ' + discountedCount + ' produit(s).' : ' · remise appliquée aux articles éligibles du panier.');
+                okEl.style.display = 'inline';
+            }
+            if (removeBtn) removeBtn.style.display = activePromo ? 'inline-flex' : 'none';
+            return data;
         })
-        .catch(() => renderCartLocal());
+        .catch(() => {
+            renderCartLocal();
+            return null;
+        });
 }
 
 /* Ajouter un produit */
 function addToCartApi(productId, name, price) {
-    apiPost('/api/cart/add', { product_id: productId })
+    return apiPost('/api/cart/add', { product_id: productId })
         .then(data => {
-            loadCart(); // Recharger depuis la BD
             showToast('✦ ' + name + ' ajouté au panier');
-            /* Ouvrir le mini-panier */
-            document.getElementById('cart-modal')?.classList.add('open');
+            return loadCart().then(() => {
+                document.getElementById('cart-modal')?.classList.add('open');
+                return data;
+            });
         })
-        .catch(() => {
-            /* Fallback local si API indisponible */
-            cartItems.push({ id: productId, name, price, quantity: 1 });
-            renderCartLocal();
-            showToast('✦ ' + name + ' ajouté au panier');
+        .catch(error => {
+            showToast(error.message || 'Impossible d’ajouter ce produit au panier.', 'err');
+            return false;
         });
 }
 
@@ -361,6 +434,7 @@ function renderCart(items, total, amount) {
             + '<div style="flex:1">'
             + '<div class="cart-item-name">' + (item.name || '') + '</div>'
             + '<div class="cart-item-price">' + priceHtml + '</div>'
+            + '<div class="cart-item-quantity">Quantité : ' + (item.quantity || 1) + '</div>'
             + '</div>'
             + '<button class="cart-item-remove" onclick="removeFromCartApi(' + item.id + ')" aria-label="Retirer">×</button>'
             + '</div>';
@@ -385,7 +459,13 @@ function renderCartLocal() {
 
 /* Ouvrir / fermer le modal panier */
 function toggleCart() {
-    document.getElementById('cart-modal')?.classList.toggle('open');
+    var modal = document.getElementById('cart-modal');
+    if (!modal) return;
+    if (modal.classList.contains('open')) {
+        modal.classList.remove('open');
+        return;
+    }
+    loadCart().then(() => modal.classList.add('open'));
 }
 
 /* Aller au checkout (paiement en ligne) */
@@ -397,9 +477,10 @@ function goToCheckout() {
 function checkoutWhatsApp() {
     apiGet('/api/cart').then(data => {
         var lines = (data.items || [])
-            .map(i => `• ${i.name} (${i.price})`)
+            .map(i => `• ${i.name} × ${i.quantity} — ${i.price_reduced || i.price}`)
             .join('\n');
-        var msg = `Bonjour KEKELI Wear ✦\n\nJe souhaite commander :\n${lines}\n\nMerci de confirmer la disponibilité.`;
+        var total = Number(data.amount || 0).toLocaleString('fr-FR') + ' XOF';
+        var msg = `Bonjour KEKELI Wear ✦\n\nJe souhaite commander :\n${lines}\n\nTotal estimé : ${total}\nMerci de confirmer la disponibilité.`;
         window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
     }).catch(() => showToast('Erreur panier', 'err'));
 }
@@ -549,6 +630,7 @@ function sendMeasurements() {
 ============================================================ */
 function sendContact() {
     var name    = document.getElementById('c-name')?.value.trim();
+    var phone   = document.getElementById('c-phone')?.value.trim();
     var email   = document.getElementById('c-email')?.value.trim();
     var message = document.getElementById('c-message')?.value.trim();
 
@@ -557,7 +639,7 @@ function sendContact() {
         return;
     }
 
-    var msg = `Bonjour KEKELI Wear ✦\n\nNom : ${name}\nEmail : ${email || 'Non renseigné'}\n\nMessage :\n${message}`;
+    var msg = `Bonjour KEKELI Wear ✦\n\nNom : ${name}\nTéléphone : ${phone || 'Non renseigné'}\nEmail : ${email || 'Non renseigné'}\n\nMessage :\n${message}`;
     window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
 }
 

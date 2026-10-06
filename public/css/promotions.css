@@ -1,0 +1,170 @@
+
+/* ============================================================
+   BADGE PROMO — dans la zone prix (pas sur l'image)
+============================================================ */
+.prod-promo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    padding: 4px 9px;
+    border-radius: 999px;
+    margin-top: 3px;
+    width: fit-content;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+/* ============================================================
+   PRIX — affichage barré + prix promo
+============================================================ */
+.prod-price-original {
+    text-decoration: line-through;
+    color: var(--soft);
+    font-size: 12px;
+    font-weight: 400;
+    margin-right: 4px;
+}
+.fav-price.striked {
+    text-decoration: line-through;
+    color: var(--soft);
+    font-size: 12px;
+}
+.prod-price-sale {
+    color: var(--red);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+/* Zone prix dans la grille produits */
+.prod-price-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.prod-price-wrap .price-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.prod-footer .prod-price-wrap { flex: 1; min-width: 0; }
+.prod-footer .prod-price-wrap .price-row { justify-content: flex-start; }
+.fav-info .prod-price-wrap { align-items: flex-start; }
+.fav-info .prod-price-sale { font-size: 14px; }
+.fav-info .prod-promo-badge { font-size: 9px; }
+
+/* ============================================================
+   PAGE DÉTAIL PRODUIT — prix promo
+============================================================ */
+.product-detail-price-wrap { display: flex; flex-direction: column; gap: 4px; }
+.detail-price-original {
+    text-decoration: line-through;
+    color: var(--soft);
+    font-size: 16px;
+    font-weight: 400;
+}
+.detail-price-sale {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--red);
+}
+.detail-promo-badge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--red);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 2px;
+    width: fit-content;
+    margin-bottom: 8px;
+}
+
+/* ============================================================
+   PAGE CATALOGUE /boutique — badge promo dans liste
+============================================================ */
+.cat-promo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #FFF5F5;
+    color: var(--red);
+    border: 1px solid #FECACA;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+}
+
+.btn-promo-remove {
+    background: transparent;
+    border: 1px solid #b91c1c;
+    color: #991b1b;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.btn-promo-remove:hover { background: #fff1f2; }
+.promo-ok { line-height: 1.5; }
+
+/* ============================================================
+   TIMER COMPTE À REBOURS (si sale_ends_at défini)
+============================================================ */
+.promo-timer {
+    font-size: 11px;
+    color: var(--red);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+.promo-timer-unit {
+    background: var(--red);
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 2px;
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 26px;
+    text-align: center;
+}
+
+/* ============================================================
+   SECTION BOUTIQUE HOME — badge promo inline
+============================================================ */
+.prod-footer-top {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 8px;
+}
+.prod-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ============================================================
+   PANIER — prix promo barré
+============================================================ */
+.cart-item-price-original {
+    text-decoration: line-through;
+    color: var(--soft);
+    font-size: 10px;
+}
+.cart-item-price-sale {
+    color: var(--red);
+    font-size: 12px;
+    font-weight: 700;
+}

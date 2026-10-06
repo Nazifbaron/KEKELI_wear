@@ -11,41 +11,29 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
-    /*
-    |----------------------------------------------------------
-    | SUMMARY — Page récapitulatif (vue Blade)
-    | Retourne la vue checkout/summary.blade.php
-    | Le JS de la page charge le panier via /api/cart
-    |----------------------------------------------------------
-    */
+    /* ============================================================
+       SUMMARY — Vue récapitulatif (Blade)
+    ============================================================ */
     public function summary(Request $request)
     {
-        $sessionId = $request->session()->getId();
-
-        // Panier vide → rediriger vers la boutique
-        $cartCount = CartItem::where('session_id', $sessionId)->count();
+        $cartCount = CartItem::where('session_id', $request->session()->getId())->count();
         if ($cartCount === 0) {
-            return redirect()->route('home')
-                             ->with('info', 'Votre panier est vide.');
+            return redirect()->route('home')->with('info', 'Votre panier est vide.');
         }
-
         return view('checkout.summary');
     }
 
-    /*
-    |----------------------------------------------------------
-    | STORE — Créer la commande en BD
-    | POST /checkout
-    | 1. Valider les données client
-    | 2. Calculer les montants (côté serveur — anti-fraude)
-    | 3. Créer Order + OrderItems en transaction DB
-    | 4. Vider le panier
-    | 5. Retourner l'URL de redirection selon le moyen de paiement
-    |----------------------------------------------------------
-    */
+    /* ============================================================
+       STORE — Créer la commande en BD
+       Calcul des montants côté serveur — anti-fraude.
+       Priorité remises :
+       1. Prix promo produit (is_currently_on_sale)
+       2. Code promo session (si applicable à la catégorie)
+    ============================================================ */
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -60,61 +48,80 @@ class CheckoutController extends Controller
         ]);
 
         $sessionId = $request->session()->getId();
-
-        // Récupérer les items du panier
         $cartItems = CartItem::where('session_id', $sessionId)
                              ->with('product.category')
                              ->get();
 
         if ($cartItems->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'error'   => 'Votre panier est vide.',
-            ], 422);
+            return response()->json(['success' => false, 'error' => 'Votre panier est vide.'], 422);
         }
 
         /*
         |----------------------------------------------------------
-        | Récupérer le code promo depuis la SESSION
-        | (pas depuis les CartItems — le code est en session)
+        | Récupérer code promo depuis la session
         |----------------------------------------------------------
         */
-        $promoCodeId  = $request->session()->get('promo_code_id');
-        $promoCode    = $promoCodeId ? PromoCode::find($promoCodeId) : null;
+        $promoCodeId     = $request->session()->get('promo_code_id');
+        $promoCategoryId = $request->session()->get('promo_category_id');
+        $promoCode       = $promoCodeId ? PromoCode::find($promoCodeId) : null;
 
-        // Vérifier que le promo est toujours valide au moment du checkout
         if ($promoCode && !$promoCode->isValid()) {
             $promoCode = null;
-            $request->session()->forget(['promo_code_id','promo_code','promo_discount','promo_type']);
+            $request->session()->forget(['promo_code_id','promo_code','promo_discount','promo_type','promo_category_id']);
+        }
+
+        // Récupérer bon d'achat depuis la session
+        $voucherId      = $request->session()->get('voucher_id');
+        $voucherBalance = (float)$request->session()->get('voucher_balance', 0);
+        $voucher        = $voucherId ? \App\Models\GiftVoucher::find($voucherId) : null;
+
+        if ($voucher && !$voucher->isUsable()) {
+            $voucher = null;
+            $voucherBalance = 0;
+            $request->session()->forget(['voucher_id','voucher_code','voucher_balance']);
         }
 
         /*
         |----------------------------------------------------------
-        | Calcul des montants côté serveur - anti-fraude
-        | On recalcule tout depuis la BD, jamais depuis le front
+        | Calcul des montants côté serveur
         |----------------------------------------------------------
         */
-        $subtotal = 0;
+        $subtotal      = 0;
+        $totalDiscount = 0;
+         // Dans le calcul du total, après $totalDiscount :
+        $voucherDeduction = $voucher ? min($voucherBalance, max(0, $subtotal - $totalDiscount)) : 0;
+        $total            = max(0, $subtotal - $totalDiscount - $voucherDeduction);
+
         foreach ($cartItems as $item) {
-            $subtotal += ($item->product->price ?? 0) * $item->quantity;
+            $product   = $item->product;
+            $basePrice = (float)($product->price ?? 0);
+
+            /* Priorité 1 — Promo produit */
+            if ($product->is_currently_on_sale && $product->sale_price > 0) {
+                $effectivePrice = (float)$product->sale_price;
+            }
+            /* Priorité 2 — Code promo (si catégorie correspond) */
+            elseif ($promoCode) {
+                $catMatch = !$promoCategoryId || $product->category_id === $promoCategoryId;
+                if ($catMatch) {
+                    $effectivePrice = $promoCode->type === 'percentage'
+                        ? $basePrice * (1 - $promoCode->discount / 100)
+                        : max(0, $basePrice - $promoCode->discount);
+                } else {
+                    $effectivePrice = $basePrice;
+                }
+            } else {
+                $effectivePrice = $basePrice;
+            }
+
+            $subtotal      += $basePrice * $item->quantity;
+            $totalDiscount += ($basePrice - $effectivePrice) * $item->quantity;
         }
 
-        $discount = 0;
-        if ($promoCode) {
-            $discount = $promoCode->type === 'percentage'
-                ? round($subtotal * ($promoCode->discount / 100))
-                : min((float)$promoCode->discount, $subtotal);
-        }
-
-        $total = max(0, $subtotal - $discount);
+        $total = max(0, $subtotal - $totalDiscount);
 
         DB::beginTransaction();
         try {
-            /*
-            |----------------------------------------------------------
-            | Créer la commande principale
-            |----------------------------------------------------------
-            */
             $order = Order::create([
                 'reference'        => Order::generateReference(),
                 'session_id'       => $sessionId,
@@ -125,121 +132,106 @@ class CheckoutController extends Controller
                 'delivery_city'    => $validated['delivery_city'],
                 'delivery_country' => $validated['delivery_country'] ?? 'Bénin',
                 'subtotal'         => $subtotal,
-                'discount_amount'  => $discount,
+                'discount_amount'  => round($totalDiscount),
                 'delivery_fee'     => 0,
-                'total'            => $total,
+                'total'            => round($total),
                 'promo_code_id'    => $promoCode?->id,
                 'payment_method'   => $validated['payment_method'],
                 'payment_status'   => 'pending',
                 'status'           => 'pending',
                 'measurement_id'   => $validated['measurement_id'] ?? null,
+                'gift_voucher_id'       => $voucher?->id,
+                'voucher_deduction'     => round($voucherDeduction),
             ]);
 
-            /*
-            |----------------------------------------------------------
-            | Créer les lignes de commande (snapshot produits)
-            | On sauvegarde nom/prix au moment de la commande
-            | pour garder l'historique même si le produit change
-            |----------------------------------------------------------
-            */
             foreach ($cartItems as $item) {
-                $unitPrice = $item->product->price ?? 0;
+                $product   = $item->product;
+                $basePrice = (float)($product->price ?? 0);
+
+                /* Recalculer le prix effectif pour chaque ligne */
+                if ($product->is_currently_on_sale && $product->sale_price > 0) {
+                    $unitPrice = (float)$product->sale_price;
+                } elseif ($promoCode) {
+                    $catMatch  = !$promoCategoryId || $product->category_id === $promoCategoryId;
+                    $unitPrice = $catMatch
+                        ? ($promoCode->type === 'percentage'
+                            ? $basePrice * (1 - $promoCode->discount / 100)
+                            : max(0, $basePrice - $promoCode->discount))
+                        : $basePrice;
+                } else {
+                    $unitPrice = $basePrice;
+                }
 
                 OrderItem::create([
                     'order_id'      => $order->id,
                     'product_id'    => $item->product_id,
-                    'product_name'  => $item->product->name,
-                    'category_name' => $item->product->category->name ?? '',
-                    'unit_price'    => $unitPrice,
+                    'product_name'  => $product->name,
+                    'category_name' => $product->category->name ?? '',
+                    'unit_price'    => round($unitPrice),
                     'quantity'      => $item->quantity,
-                    'subtotal'      => $unitPrice * $item->quantity,
-                    'is_custom'     => $item->product->is_custom,
+                    'subtotal'      => round($unitPrice * $item->quantity),
+                    'is_custom'     => $product->is_custom,
                 ]);
 
-                // Incrémenter le compteur de commandes du produit
-                $item->product->increment('orders_count');
-                // Recalculer le score coup de cœur
-                $item->product->recalculateScore();
+                $product->increment('orders_count');
+                $product->recalculateScore();
             }
 
-            // Consommer le code promo
             $promoCode?->markUsed();
-
-            // Vider le panier ET la session promo
             CartItem::where('session_id', $sessionId)->delete();
             $request->session()->forget([
-                'promo_code_id', 'promo_code',
-                'promo_discount', 'promo_type',
+                'promo_code_id','promo_code','promo_discount','promo_type','promo_category_id',
             ]);
 
             DB::commit();
-
-            /*
-            |----------------------------------------------------------
-            | Construire la réponse selon le moyen de paiement
-            |----------------------------------------------------------
-            */
-            $redirectUrl = $this->buildRedirectUrl($order);
+            // Après DB::commit(), utiliser le bon :
+            if ($voucher && $voucherDeduction > 0) {
+                $voucher->use($voucherDeduction, $order->id);
+                $request->session()->forget(['voucher_id','voucher_code','voucher_balance']);
+            }
 
             return response()->json([
                 'success'      => true,
                 'order_ref'    => $order->reference,
-                'redirect_url' => $redirectUrl,
+                'redirect_url' => $this->buildRedirectUrl($order),
                 'whatsapp_msg' => $order->toWhatsAppMessage(),
-                'total'        => $total,
+                'total'        => round($total),
             ]);
 
         } catch (\Throwable $e) {
             DB::rollBack();
-
-            return response()->json([
-                'success' => false,
-                'error'   => 'Erreur lors de la création de la commande. Veuillez réessayer.',
-            ], 500);
+            Log::error('Checkout error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => 'Erreur lors de la commande. Veuillez réessayer.'], 500);
         }
     }
 
-    /*
-    |----------------------------------------------------------
-    | PAYMENT CALLBACK — Confirmation de paiement FedaPay
-    | POST /checkout/payment/{ref}/callback
-    | Appelé par le widget JS FedaPay après succès paiement.
-    | Vérifie la transaction auprès de l'API FedaPay,
-    | met à jour le statut de la commande en BD.
-    |----------------------------------------------------------
-    */
+    /* ============================================================
+       PAYMENT PAGE
+    ============================================================ */
+    public function paymentPage(string $ref)
+    {
+        $order = Order::where('reference', $ref)->firstOrFail();
+        if ($order->isPaid()) return redirect()->route('checkout.confirmation', $ref);
+        return view('checkout.payment', compact('ref', 'order'));
+    }
+
+    /* ============================================================
+       PAYMENT CALLBACK — KKiaPay
+    ============================================================ */
     public function paymentCallback(Request $request, string $reference): JsonResponse
     {
         $order = Order::where('reference', $reference)->firstOrFail();
-
-        // Éviter le double-traitement
         if ($order->payment_status === 'paid') {
-            return response()->json([
-                'success' => true,
-                'message' => 'Commande déjà confirmée.',
-            ]);
+            return response()->json(['success' => true, 'message' => 'Commande déjà confirmée.']);
         }
 
         $transactionId = $request->input('transaction_id');
-        $status        = $request->input('status');
+        $status        = strtoupper((string) $request->input('status', ''));
 
-        /*
-        |----------------------------------------------------------
-        | Vérification côté serveur via l'API FedaPay
-        | On ne fait jamais confiance au statut envoyé par le front
-        |----------------------------------------------------------
-        */
-        if ($transactionId && config('kekeli.fedapay_env') !== 'sandbox') {
-            $verified = $this->verifyFedaPayTransaction($transactionId);
-            if (!$verified) {
-                return response()->json([
-                    'success' => false,
-                    'error'   => 'Transaction non vérifiée.',
-                ], 422);
-            }
+        if ($transactionId && config('kekeli.kkiapay_env') !== 'sandbox') {
+            $verified = $this->verifyKkiapayTransaction($transactionId, (float) $order->total);
         } else {
-            // Mode sandbox → on accepte le statut du front
-            $verified = ($status === 'SUCCESS');
+            $verified = in_array($status, ['SUCCESS', 'PAID', 'APPROVED'], true);
         }
 
         if ($verified) {
@@ -249,122 +241,55 @@ class CheckoutController extends Controller
                 'paid_at'           => now(),
                 'status'            => 'processing',
             ]);
-
-            return response()->json([
-                'success'    => true,
-                'message'    => 'Paiement confirmé. Commande en cours de traitement.',
-                'order_ref'  => $order->reference,
-            ]);
+            return response()->json(['success' => true, 'order_ref' => $order->reference]);
         }
 
-        // Paiement échoué
         $order->update(['payment_status' => 'failed']);
-
-        return response()->json([
-            'success' => false,
-            'error'   => 'Paiement non abouti.',
-        ], 422);
+        return response()->json(['success' => false, 'error' => 'Paiement non abouti.'], 422);
     }
 
-    /*
-    |----------------------------------------------------------
-    | CONFIRMATION — Page de confirmation (vue Blade)
-    | GET /checkout/confirmation/{ref}
-    | Affichée après paiement réussi ou commande WhatsApp
-    |----------------------------------------------------------
-    */
+    /* ============================================================
+       CONFIRMATION
+    ============================================================ */
     public function confirmation(string $ref)
     {
-        // Vérifier que la commande existe
         $order = Order::where('reference', $ref)->firstOrFail();
-
-        return view('checkout.confirmation', [
-            'ref'   => $ref,
-            'order' => $order,
-        ]);
+        return view('checkout.confirmation', compact('ref', 'order'));
     }
 
-    /*
-    |----------------------------------------------------------
-    | PAYMENT PAGE — Page de paiement (vue Blade)
-    | GET /checkout/payment/{ref}
-    | Charge le widget FedaPay pour finaliser le paiement
-    |----------------------------------------------------------
-    */
-    public function paymentPage(string $ref)
-    {
-        $order = Order::where('reference', $ref)->firstOrFail();
-
-        // Si déjà payée → aller directement à la confirmation
-        if ($order->isPaid()) {
-            return redirect()->route('checkout.confirmation', $ref);
-        }
-
-        return view('checkout.payment', [
-            'ref'   => $ref,
-            'order' => $order,
-        ]);
-    }
-
-    /*
-    |==========================================================
-    | MÉTHODES PRIVÉES
-    |==========================================================
-    */
-
-    /*
-    |----------------------------------------------------------
-    | Vérifier une transaction FedaPay côté serveur
-    | Utilise la clé secrète (jamais exposée au front)
-    | Doc : https://docs.fedapay.com/api#retrieve-a-transaction
-    |----------------------------------------------------------
-    */
-    private function verifyFedaPayTransaction(string $transactionId): bool
+    /* ============================================================
+       PRIVÉ — Vérification KKiaPay côté serveur
+    ============================================================ */
+    private function verifyKkiapayTransaction(string $transactionId, float $amount): bool
     {
         try {
-            $env       = config('kekeli.fedapay_env', 'sandbox');
-            $secretKey = config('kekeli.fedapay_secret_key');
-            $baseUrl   = $env === 'live'
-                ? 'https://api.fedapay.com/v1'
-                : 'https://sandbox-api.fedapay.com/v1';
-
-            $response = Http::withToken($secretKey)
-                            ->get("{$baseUrl}/transactions/{$transactionId}");
+            $response = Http::withHeaders([
+                'x-private-key' => config('kekeli.kkiapay_private_key'),
+            ])->get('https://api.kkiapay.me/api/v1/transactions/' . $transactionId);
 
             if ($response->successful()) {
                 $data   = $response->json();
-                $status = $data['v1/transaction']['status'] ?? '';
-                return $status === 'approved';
+                $status = strtoupper((string) ($data['status'] ?? ''));
+                $txAmt  = (float) ($data['amount'] ?? 0);
+
+                return in_array($status, ['SUCCESS', 'PAID', 'APPROVED'], true)
+                    && $txAmt >= $amount;
             }
-
-            return false;
-
         } catch (\Throwable $e) {
-            // En cas d'erreur API → ne pas bloquer la commande
-            // Logguer l'erreur et laisser passer en sandbox
-            \Log::error('FedaPay verify error: ' . $e->getMessage());
-            return false;
+            Log::error('KKiaPay verify error: ' . $e->getMessage());
         }
+
+        return config('kekeli.kkiapay_env', 'sandbox') === 'sandbox';
     }
 
-    /*
-    |----------------------------------------------------------
-    | Construire l'URL de redirection selon le moyen de paiement
-    |----------------------------------------------------------
-    */
     private function buildRedirectUrl(Order $order): string
     {
         return match($order->payment_method) {
-            // Paiement en ligne → page widget FedaPay
             'mtn_momo', 'moov_money', 'card' =>
                 route('checkout.payment.gateway', ['ref' => $order->reference]),
-
-            // WhatsApp → message pré-rempli (géré côté JS)
-            'whatsapp' =>
-                route('checkout.confirmation', ['ref' => $order->reference]),
-
             default =>
                 route('checkout.confirmation', ['ref' => $order->reference]),
         };
     }
 }
+

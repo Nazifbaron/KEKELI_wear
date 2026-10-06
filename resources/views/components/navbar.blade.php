@@ -34,14 +34,23 @@
         {{-- Liens desktop --}}
         <div class="nav-links">
             <a href="#hero"        class="nav-link active">Accueil</a>
-            <a href="#advantages"   class="nav-link">Avantages</a>
+            <a href="/about"       class="nav-link">À propos</a>
             <a href="#catalogue"   class="nav-link">Nos créations</a>
             <a href="#featured"    class="nav-link">Tendances</a>
             <a href="#shop"        class="nav-link">Boutique</a>
             <a href="#morphology"  class="nav-link">Espace client</a>
             <a href="#reviews"     class="nav-link">Avis</a>
             <a href="#contact"     class="nav-link">Contact</a>
-            <a href="/about"       class="nav-link">À propos</a>
+            <a href="{{ route('bon') }}"
+                class="nav-link nav-link-gift"
+                style="display:inline-flex;align-items:center;gap:6px;
+                        background:linear-gradient(135deg,#C9A84C,#a8893e);
+                        color:#fff;padding:7px 14px;border-radius:3px;
+                        font-size:10px;font-weight:700;letter-spacing:.1em;
+                        text-transform:uppercase;text-decoration:none;
+                        transition:all .2s">
+                    🎁 <span>Offrir un bon</span>
+            </a>
         </div>
 
         {{-- Bouton menu mobile --}}

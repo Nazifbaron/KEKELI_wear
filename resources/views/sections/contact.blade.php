@@ -5,35 +5,50 @@
 ============================================================ --}}
 <section id="contact">
     <div class="container">
-        <div class="sec-label">Nous joindre</div>
-        <div class="sec-title" style="font-size:28px;margin-bottom:36px">Contact</div>
+        <header class="ct__head" data-v-5ebeeac8>
+            <p class="ct__eyebrow" data-v-5ebeeac8>Contact</p>
+            <h1 class="ct__title" data-v-5ebeeac8>Écrivez-nous</h1>
+            <p class="ct__intro" data-v-5ebeeac8>Une question sur une commande,
+                un produit ou une création sur-mesure ? Notre équipe vous répond avec plaisir.</p>
+        </header>
         {{-- ===== CARTES D'INFORMATIONS ===== --}}
         <div class="contact-cards" style="margin-bottom:48px">
             <article class="contact-card">
-                <div class="ci-icon">📍</div>
-                <div class="ci-label">Adresse</div>
-                <div class="ci-value">Pk11, Séyivè, Sèmé-Kpodji<br>Cotonou, Bénin</div>
-            </article>
-            <article class="contact-card">
-                <div class="ci-icon">📧</div>
-                <div class="ci-label">Email</div>
-                <div class="ci-value">
-                    <a href="mailto:kekeliwear229@gmail.com">kekeliwear229@gmail.com</a>
-                </div>
-            </article>
-            <article class="contact-card">
-                <div class="ci-icon">📱</div>
-                <div class="ci-label">WhatsApp</div>
-                <div class="ci-value">
-                    <a href="https://wa.me/{{ config('kekeli.whatsapp') }}" target="_blank" rel="noopener">
+                <h2 data-v-5ebeeac8="" class="ct__bt">Nos coordonnées</h2>
+                <p data-v-5ebeeac8="" class="ct__line">
+                    <strong data-v-5ebeeac8="">Adresse</strong><br data-v-5ebeeac8="">
+                    Pk11, Séyivè, Sèmé-Kpodji<br data-v-5ebeeac8="">Cotonou, Bénin
+                </p>
+                <p data-v-5ebeeac8="" class="ct__line">
+                    <strong data-v-5ebeeac8="">Téléphone whatsapp</strong><br data-v-5ebeeac8="">
+                    <a data-v-5ebeeac8="" href="https://wa.me/{{ config('kekeli.whatsapp') }}" target="_blank" rel="noopener">
                         +229 01 40 13 49 49
                     </a>
-                </div>
+                </p>
+                <p data-v-5ebeeac8="" class="ct__line">
+                    <strong data-v-5ebeeac8="">Email</strong><br data-v-5ebeeac8="">
+                    <a data-v-5ebeeac8="" href="mailto:kekeliwear229@gmail.com">kekeliwear229@gmail.com</a>
+                </p>
             </article>
             <article class="contact-card">
-                <div class="ci-icon">🚚</div>
-                <div class="ci-label">Livraison</div>
-                <div class="ci-value">Tout le Bénin + International<br>Retrait à Sèmé-Kpodji</div>
+                <h2 data-v-5ebeeac8="" class="ct__bt">Horaires</h2>
+                <p data-v-5ebeeac8="" class="ct__line">Du lundi au samedi : 09h00 à 20h00</p>
+                <p data-v-5ebeeac8="" class="ct__line ct__muted">Dimanche : Ouverture exceptionnelle en cas de nécessité sinon fermé</p>
+            </article>
+            <article class="contact-card">
+                <h2 data-v-5ebeeac8="" class="ct__bt">Suivez-nous</h2>
+                <p data-v-5ebeeac8="" class="ct__line ct__muted">Retrouvez nos nouveautés et coulisses sur les réseaux.</p>
+                <div class="ct__social" data-v-5ebeeac8>
+                    <a data-v-5ebeeac8 href="https://facebook.com/kekeliwear229" target="_blank" rel="noopener" title="Facebook">f</a>
+                    <a data-v-5ebeeac8 href="https://wa.me/{{ config('kekeli.whatsapp') }}" target="_blank" rel="noopener" title="WhatsApp">W</a>
+                    <a data-v-5ebeeac8 href="https://tiktok.com/@kekeliwear229" target="_blank" rel="noopener" title="TikTok">T</a>
+                </div>
+
+            </article>
+            <article class="contact-card">
+                <h2 data-v-5ebeeac8="" class="ct__bt">Livraison</h2>
+                <p data-v-5ebeeac8="" class="ct__line">Tout le Bénin + International<br>Retrait à Sèmé-Kpodji</p>
+                <div class="ci-value"></div>
             </article>
         </div>
 
@@ -61,6 +76,17 @@
                 <div class="k-form-group">
                     <input
                         class="k-form-input"
+                        id="c-phone"
+                        type="tel"
+                        placeholder=" "
+                        autocomplete="tel">
+                    <label class="k-form-label" for="c-phone">
+                        Téléphone (optionnel)
+                    </label>
+                </div>
+                <div class="k-form-group">
+                    <input
+                        class="k-form-input"
                         id="c-email"
                         type="email"
                         placeholder=" "
@@ -69,6 +95,7 @@
                         Email (optionnel)
                     </label>
                 </div>
+
                 <div class="k-form-group">
                     <textarea
                         class="k-form-input k-form-textarea"

@@ -36,8 +36,8 @@
 
             {{-- Catégories --}}
             <a href="{{ route('admin.categories') }}"
-               class="sidebar-link {{ request()->routeIs('admin.categories*') ? 'active' : '' }}">
-                <span class="s-icon">🗂</span> Catégories
+                class="sidebar-link {{ request()->routeIs('admin.categories*') ? 'active' : '' }}">
+                    <span class="s-icon">🗂</span> Univers
             </a>
 
             {{-- Produits --}}
@@ -70,6 +70,11 @@
             <a href="{{ route('admin.promo-codes') }}"
                class="sidebar-link {{ request()->routeIs('admin.promo-codes*') ? 'active' : '' }}">
                 <span class="s-icon">🎁</span> Codes Promo
+            </a>
+
+            <a href="{{ route('admin.vouchers') }}"
+                class="sidebar-link {{ request()->routeIs('admin.vouchers*') ? 'active' : '' }}">
+                    <span class="s-icon">🎁</span> Bons d'achat
             </a>
 
             <div class="sidebar-sep">Clients</div>

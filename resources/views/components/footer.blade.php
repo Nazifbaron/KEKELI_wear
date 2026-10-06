@@ -27,6 +27,11 @@
                     <a href="#shop">Boutique</a>
                     <a href="#morphology">Mon profil morphologique</a>
                     <a href="#featured">Coups de cœur</a>
+                    <a href="{{ route('bon') }}"
+                        class="footer-link"
+                        style="display:flex;align-items:center;gap:6px">
+                            🎁 Offrir un bon d'achat
+                    </a>
                 </div>
             </div>
 

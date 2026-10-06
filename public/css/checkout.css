@@ -271,6 +271,7 @@
     animation: popIn .55s cubic-bezier(.34,1.56,.64,1);
     display: block;
 }
+
 @keyframes popIn { 0%{transform:scale(0);opacity:0} 100%{transform:scale(1);opacity:1} }
 .confirmation-title  { font-size: 24px; font-weight: 700; color: #1A1A1A; margin-bottom: 8px; }
 .confirmation-ref    { font-size: 13px; color: #8A8A8A; margin-bottom: 28px; }
@@ -312,6 +313,338 @@
     margin-left: 8px; vertical-align: middle;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   checkout.css — KEKELI WEAR
+   Thème checkout premium light
+============================================================ */
+
+:root {
+    --ck-black:  #0A0A0A;
+    --ck-white:  #FFFFFF;
+    --ck-cream:  #FAF8F5;
+    --ck-border: #E8E0D8;
+    --ck-soft:   #9E9289;
+    --ck-mid:    #5C5248;
+    --ck-red:    #E42829;
+    --ck-green:  #16a34a;
+    --ck-gold:   #C9A84C;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.ck-body {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    background: var(--ck-cream);
+    color: var(--ck-black);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+}
+
+/* ============================================================
+   HEADER + STEPS
+============================================================ */
+.ck-header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--ck-white);
+    border-bottom: 1px solid var(--ck-border);
+    padding: 0 32px;
+    height: 64px;
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 20px;
+}
+.ck-logo {
+    font-size: 17px; font-weight: 900; letter-spacing: .14em;
+    text-transform: uppercase; text-decoration: none; color: var(--ck-black);
+    white-space: nowrap; flex-shrink: 0;
+}
+.ck-logo span { color: var(--ck-red); }
+
+.ck-steps {
+    display: flex; align-items: center; gap: 0; flex: 1;
+    justify-content: center; max-width: 420px;
+}
+.ck-step {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.ck-step-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--ck-cream); border: 2px solid var(--ck-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--ck-soft);
+    transition: all .3s;
+}
+.ck-step.active .ck-step-dot {
+    background: var(--ck-red); border-color: var(--ck-red); color: #fff;
+}
+.ck-step.done .ck-step-dot {
+    background: var(--ck-green); border-color: var(--ck-green); color: #fff;
+}
+.ck-step-label {
+    font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ck-soft); white-space: nowrap;
+}
+.ck-step.active .ck-step-label { color: var(--ck-red); font-weight: 700; }
+.ck-step.done  .ck-step-label  { color: var(--ck-green); }
+
+.ck-step-line {
+    flex: 1; height: 1px; background: var(--ck-border);
+    max-width: 48px; margin: 0 4px; margin-bottom: 14px;
+    transition: background .3s;
+}
+.ck-step-line.done { background: var(--ck-green); }
+
+.ck-back-link {
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ck-soft); text-decoration: none; white-space: nowrap;
+    flex-shrink: 0; transition: color .2s;
+}
+.ck-back-link:hover { color: var(--ck-red); }
+
+/* ============================================================
+   MAIN
+============================================================ */
+.ck-main {
+    flex: 1; padding: 36px 32px; max-width: 1100px;
+    margin: 0 auto; width: 100%;
+}
+.ck-alert {
+    padding: 12px 18px; border-radius: 6px;
+    font-size: 13px; margin-bottom: 20px; border-left: 3px solid;
+}
+.ck-alert-ok  { background: #f0fdf4; border-color: var(--ck-green); color: #15803d; }
+.ck-alert-err { background: #FFF5F5; border-color: var(--ck-red);   color: var(--ck-red); }
+
+/* ============================================================
+   GRILLE CHECKOUT
+============================================================ */
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 32px;
+    align-items: start;
+}
+@media (max-width: 860px) {
+    .checkout-grid { grid-template-columns: 1fr; }
+}
+
+.ck-section-title {
+    font-size: 11px; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--ck-mid);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--ck-border);
+}
+
+/* ============================================================
+   LIGNES PANIER
+============================================================ */
+.ck-cart-lines { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.ck-loading     { padding: 20px; text-align: center; color: var(--ck-soft); font-size: 13px; }
+.ck-empty       { padding: 20px; text-align: center; color: var(--ck-soft); font-size: 13px; }
+
+.ck-cart-line {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--ck-white); border: 1px solid var(--ck-border);
+    border-radius: 8px; padding: 12px 14px;
+}
+.ck-item-img {
+    width: 60px; height: 60px; border-radius: 6px; overflow: hidden;
+    border: 1px solid var(--ck-border); flex-shrink: 0;
+}
+.ck-item-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.ck-item-img-placeholder {
+    width:100%; height:100%; background:var(--ck-cream);
+    display:flex; align-items:center; justify-content:center; font-size:24px;
+}
+.ck-item-info  { flex: 1; min-width: 0; }
+.ck-item-name  { font-size: 13px; font-weight: 700; color: var(--ck-black);
+                 white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ck-item-cat   { font-size: 11px; color: var(--ck-soft); margin-top: 2px; }
+.ck-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+.ck-price-normal { font-size: 13px; font-weight: 700; color: var(--ck-black); }
+.ck-price-original {
+    text-decoration: line-through; color: var(--ck-soft); font-size: 11px;
+}
+.ck-price-sale { font-size: 14px; font-weight: 700; color: var(--ck-red); }
+.ck-badge-sale {
+    background: var(--ck-red); color: #fff; font-size: 9px; font-weight: 700;
+    padding: 2px 6px; border-radius: 2px; text-align: center;
+}
+.ck-qty-wrap {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--ck-cream); border: 1px solid var(--ck-border);
+    border-radius: 4px; padding: 2px 6px;
+}
+.ck-qty-wrap button {
+    background: none; border: none; font-size: 16px; cursor: pointer;
+    color: var(--ck-mid); width: 20px; text-align: center; line-height: 1;
+    transition: color .2s; font-family: inherit;
+}
+.ck-qty-wrap button:hover { color: var(--ck-red); }
+.ck-qty-wrap span { font-size: 12px; font-weight: 700; min-width: 18px; text-align: center; }
+
+/* ============================================================
+   CODE PROMO + BON D'ACHAT
+============================================================ */
+.ck-promo-block, .ck-voucher-block {
+    background: var(--ck-white); border: 1px solid var(--ck-border);
+    border-radius: 8px; padding: 16px; margin-bottom: 12px;
+}
+.ck-voucher-block { border-color: var(--ck-gold); background: #FFFDF5; }
+.ck-promo-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--ck-mid); margin-bottom: 10px;
+}
+.ck-promo-row {
+    display: flex; gap: 8px;
+}
+.ck-promo-row input {
+    flex: 1; padding: 9px 12px; font-size: 13px; font-family: monospace;
+    background: var(--ck-cream); border: 1px solid var(--ck-border);
+    border-radius: 4px; outline: none; transition: border-color .2s;
+}
+.ck-promo-row input:focus { border-color: var(--ck-red); }
+.ck-promo-row button {
+    background: var(--ck-black); color: #fff; border: none;
+    padding: 9px 16px; border-radius: 4px; font-size: 11px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+    font-family: inherit; transition: background .2s; white-space: nowrap;
+}
+.ck-promo-row button:hover { background: var(--ck-red); }
+.ck-feedback {
+    font-size: 12px; margin-top: 8px; padding: 6px 10px;
+    border-radius: 3px;
+}
+.ck-feedback-ok  { background: #f0fdf4; color: var(--ck-green); border-left: 2px solid var(--ck-green); }
+.ck-feedback-err { background: #FFF5F5; color: var(--ck-red);   border-left: 2px solid var(--ck-red); }
+
+/* ============================================================
+   TOTAUX
+============================================================ */
+.ck-totals {
+    background: var(--ck-white); border: 1px solid var(--ck-border);
+    border-radius: 8px; padding: 20px; margin-bottom: 24px;
+}
+.ck-totals-title {
+    font-size: 11px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ck-mid);
+    margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--ck-border);
+}
+.ck-total-line {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0; font-size: 13px; color: var(--ck-mid);
+    border-bottom: 1px solid var(--ck-border);
+}
+.ck-total-line:last-child { border-bottom: none; padding-top: 12px; margin-top: 4px; }
+.ck-discount span:last-child { color: var(--ck-green); font-weight: 700; }
+.ck-total-final { font-weight: 700; font-size: 15px !important; color: var(--ck-black) !important; }
+
+/* ============================================================
+   FORMULAIRE
+============================================================ */
+.ck-form { display: flex; flex-direction: column; gap: 14px; }
+.ck-field { display: flex; flex-direction: column; gap: 5px; }
+.ck-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ck-field label {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--ck-soft);
+}
+.ck-field input, .ck-field select {
+    padding: 11px 14px; font-size: 14px; font-family: inherit;
+    background: var(--ck-cream); border: 1.5px solid var(--ck-border);
+    border-radius: 5px; outline: none; color: var(--ck-black);
+    transition: border-color .2s;
+}
+.ck-field input:focus, .ck-field select:focus {
+    border-color: var(--ck-red); background: var(--ck-white);
+}
+
+/* Modes de paiement */
+.ck-payment-methods {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+}
+.ck-pm-card {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 14px 10px; background: var(--ck-cream);
+    border: 1.5px solid var(--ck-border); border-radius: 8px;
+    cursor: pointer; transition: all .2s; text-align: center;
+}
+.ck-pm-card input { display: none; }
+.ck-pm-card:hover { border-color: var(--ck-red); background: #FFF5F5; }
+.ck-pm-card.active {
+    border-color: var(--ck-red); background: #FFF5F5;
+    box-shadow: 0 0 0 3px rgba(228,40,41,.1);
+}
+.ck-pm-label { font-size: 11px; font-weight: 700; color: var(--ck-mid); }
+
+.ck-error-msg {
+    background: #FFF5F5; border: 1px solid #FECACA;
+    border-left: 3px solid var(--ck-red);
+    border-radius: 4px; padding: 10px 14px;
+    font-size: 12px; color: var(--ck-red);
+}
+.ck-btn-confirm {
+    background: linear-gradient(135deg, #e42829, #c01f20);
+    color: #fff; border: none; padding: 15px 24px;
+    border-radius: 6px; font-size: 13px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: all .2s; width: 100%;
+}
+.ck-btn-confirm:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(228,40,41,.35); }
+.ck-btn-confirm:disabled { opacity: .7; transform: none; cursor: not-allowed; }
+
+/* ============================================================
+   PAGE PAIEMENT
+============================================================ */
+.ck-recap-card {
+    background: var(--ck-white); border: 1px solid var(--ck-border);
+    border-radius: 10px; padding: 24px; margin-bottom: 28px;
+}
+.ck-recap-ref { font-size: 12px; color: var(--ck-soft); margin-bottom: 10px; }
+.ck-recap-amount {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; font-weight: 700; color: var(--ck-black);
+}
+.ck-recap-total {
+    font-size: 26px; font-weight: 900; color: var(--ck-red);
+}
+.ck-pay-options { display: flex; flex-direction: column; gap: 10px; }
+.ck-pay-option {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--ck-white); border: 1.5px solid var(--ck-border);
+    border-radius: 10px; padding: 18px 20px; cursor: pointer; transition: all .2s;
+}
+.ck-pay-option:hover {
+    border-color: var(--ck-red); box-shadow: 0 4px 16px rgba(228,40,41,.1);
+    transform: translateY(-1px);
+}
+.ck-pay-option.ck-pay-wa:hover { border-color: #25D366; box-shadow: 0 4px 16px rgba(37,211,102,.1); }
+.ck-pay-icon { font-size: 26px; flex-shrink: 0; width: 36px; text-align: center; }
+.ck-pay-info { flex: 1; }
+.ck-pay-name { font-size: 14px; font-weight: 700; color: var(--ck-black); margin-bottom: 2px; }
+.ck-pay-sub  { font-size: 11px; color: var(--ck-soft); }
+.ck-pay-arrow { color: var(--ck-soft); font-size: 18px; }
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.ck-footer {
+    padding: 16px 32px; border-top: 1px solid var(--ck-border);
+    font-size: 11px; color: var(--ck-soft);
+    display: flex; justify-content: center;
+    background: var(--ck-white);
+}
+
+@media (max-width: 600px) {
+    .ck-main    { padding: 20px 16px; }
+    .ck-header  { padding: 0 16px; }
+    .ck-field-row, .ck-payment-methods { grid-template-columns: 1fr; }
+    .ck-steps   { display: none; }
+}
 
 /* ============================================================
    RESPONSIVE

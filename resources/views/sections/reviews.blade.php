@@ -48,28 +48,33 @@
             </p>
         @endif
 
-        {{-- Score moyen global --}}
-        <div class="avg-score" style="margin-top:22px;">
-            <div class="avg-num" style="color: red;">{{ number_format($avgRating, 1, ',', '') }}</div>
-            <div class="avg-detail">
-                <div style="color:var(--red);font-size:16px;margin-bottom:2px">
-                    @for($i = 1; $i <= 5; $i++)
-                        {{ $i <= round($avgRating) ? '★' : '☆' }}
-                    @endfor
+        <div class="review-summary-row">
+            {{-- Score moyen global --}}
+            <div class="avg-score">
+                <div class="avg-num" style="color: red;">{{ number_format($avgRating, 1, ',', '') }}</div>
+                <div class="avg-detail">
+                    <div style="color:var(--red);font-size:16px;margin-bottom:2px">
+                        @for($i = 1; $i <= 5; $i++)
+                            {{ $i <= round($avgRating) ? '★' : '☆' }}
+                        @endfor
+                    </div>
+                    <div>Note moyenne · {{ $reviews->count() }} avis vérifiés</div>
                 </div>
-                <div>Note moyenne · {{ $reviews->count() }} avis vérifiés</div>
+            </div>
+
+            {{-- Bouton pour ouvrir le formulaire d'avis --}}
+            <div class="review-toggle-btn">
+                <button class="btn-gold" onclick="toggleReviewForm()" id="btn-review-toggle">
+                    ✦ Laisser mon avis
+                </button>
+                <span class="review-note-guidance">
+                    Votre avis sera publié après validation par notre équipe.
+                </span>
             </div>
         </div>
 
-        {{-- Bouton pour ouvrir le formulaire d'avis --}}
-        <div class="review-toggle-btn" style="margin-top:12px;">
-            <button class="btn-gold" onclick="toggleReviewForm()" id="btn-review-toggle">
-                ✦ Laisser mon avis
-            </button>
-            <span style="font-size:13px;color:var(--soft)">
-                Votre avis sera publié après validation par notre équipe.
-            </span>
-        </div>
+
+
 
         {{-- Formulaire — masqué par défaut, s'ouvre au clic --}}
         <div class="review-form-wrap" id="review-form-wrap">

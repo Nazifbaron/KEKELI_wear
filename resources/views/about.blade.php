@@ -92,16 +92,27 @@
                         <div class="divider"></div>
 
                         <p class="about-text">
-                            « Kekeli » signifie <span style="color:var(--kgold)">"Lumière"</span>. Notre mode est née du désir de
-                            révéler la lumière intérieure de chaque femme.
-                            Fondée par <strong>Mrs Dègnon</strong> , et co-gérée avec <strong>Mlle Eunice</strong>, <em>Kekeli Wear</em>
-                            est une maison de mode afrofusion basée à Cotonou. Chaque pièce est unique, pensée pour sublimer votre morphologie, raconter une histoire et affirmer la puissance du féminin.
+                            « Kekeli » signifie <span style="color:var(--kgold)">"Lumière"</span>. 
+                            Notre maison est née d'un désir simple : révéler la lumière intérieure de chaque femme.
+                            Fondée par <strong>Mrs Dègnon</strong> et co-gérée avec str <strong>Mlle Eunice</strong>, <em>KEKELI Wear</em> 
+                            est une maison de mode afrofusion basée à Cotonou. Chaque pièce est unique, pensée pour sublimer votre morphologie, 
+                            raconter une histoire et affirmer la puissance du féminin.
+                            
                         </p>
                         <p class="about-text" style="margin-bottom:36px">
-                            Nous défendons une mode durable et engagée : des créations écoresponsables
-                            et des conseils sincères pour valoriser le style de la femme béninoise, africaine
-                            et internationale — sans jamais chercher la perfection, mais le rayonnement.
-                            Née de la vision partagée de
+                            <strong>Notre engagement :</strong> nous défendons une mode durable et engagée : des créations écoresponsables et des conseils sincères 
+                            pour valoriser le style de la femme béninoise, africaine et internationale... Sans jamais chercher 
+                            la perfection, mais le rayonnement!
+                            Pour nous, être écoresponsable, c'est 3 respects :
+                            Le respect de vous, nos clientes : des pièces uniques, de qualité, qui durent et qui vous subliment vraiment.
+                            Le respect de nos artisans : un savoir-faire local valorisé, rémunéré justement et transmis avec dignité.
+                            Le respect de notre environnement : une production raisonnée, moins de gaspillage, plus de sens.
+                            
+                        </p>
+                        <p class="about-text" style="margin-bottom:36px">
+                            <strong>Notre conviction :</strong> Consommer écoresponsable, ce n'est pas une tendance. C'est choisir de préserver la nature, 
+                            protéger notre environnement et laisser une empreinte lumineuse pour les générations futures.
+                            100% PIÈCES UNIQUES | 4 UNIVERS DE CRÉATION | BÉNIN & AU-DELÀ
                         </p>
 
                         {{-- Stats visuelles --}}
@@ -117,6 +128,9 @@
                             <div class="stat-card">
                                 <div class="stat-num">🌍</div>
                                 <div class="stat-lab">Bénin & au-delà</div>
+                            </div>
+                            <div class="stat-card">
+                                <img src="{{ asset('images/logo2.png') }}" alt="Écoresponsable" style="height: 100px; background:black" />
                             </div>
                         </div>
                     </div>
