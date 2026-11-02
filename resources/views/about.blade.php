@@ -14,7 +14,7 @@
     @stack('styles')
 </head>
 
-<body>
+<body class="nav-solid-page">
     {{-- TOP BAR — réseaux sociaux, non fixe --}}
     <div id="top-bar">
         <div class="top-bar-msg">
@@ -87,30 +87,30 @@
                     <div>
                         <div class="sec-label">✦ À propos de la marque</div>
                         <div class="sec-title">
-                            Kekeli Wear - une lumière pour la mode au féminin
+                            KEKELI Wear - une lumière pour la mode au féminin
                         </div>
                         <div class="divider"></div>
 
                         <p class="about-text">
-                            « Kekeli » signifie <span style="color:var(--kgold)">"Lumière"</span>. 
+                            « Kekeli » signifie <span style="color:var(--gold)">"Lumière"</span>.
                             Notre maison est née d'un désir simple : révéler la lumière intérieure de chaque femme.
-                            Fondée par <strong>Mrs Dègnon</strong> et co-gérée avec str <strong>Mlle Eunice</strong>, <em>KEKELI Wear</em> 
-                            est une maison de mode afrofusion basée à Cotonou. Chaque pièce est unique, pensée pour sublimer votre morphologie, 
+                            Fondée par <strong>Mrs Dègnon</strong> et co-gérée avec <strong>Mlle Eunice</strong>, <em>KEKELI Wear</em>
+                            est une maison de mode afrofusion basée à Cotonou. Chaque pièce est unique, pensée pour sublimer votre morphologie,
                             raconter une histoire et affirmer la puissance du féminin.
-                            
+
                         </p>
                         <p class="about-text" style="margin-bottom:36px">
-                            <strong>Notre engagement :</strong> nous défendons une mode durable et engagée : des créations écoresponsables et des conseils sincères 
-                            pour valoriser le style de la femme béninoise, africaine et internationale... Sans jamais chercher 
+                            <strong>Notre engagement :</strong> nous défendons une mode durable et engagée : des créations écoresponsables et des conseils sincères
+                            pour valoriser le style de la femme béninoise, africaine et internationale... Sans jamais chercher
                             la perfection, mais le rayonnement!
                             Pour nous, être écoresponsable, c'est 3 respects :
                             Le respect de vous, nos clientes : des pièces uniques, de qualité, qui durent et qui vous subliment vraiment.
                             Le respect de nos artisans : un savoir-faire local valorisé, rémunéré justement et transmis avec dignité.
                             Le respect de notre environnement : une production raisonnée, moins de gaspillage, plus de sens.
-                            
+
                         </p>
                         <p class="about-text" style="margin-bottom:36px">
-                            <strong>Notre conviction :</strong> Consommer écoresponsable, ce n'est pas une tendance. C'est choisir de préserver la nature, 
+                            <strong>Notre conviction :</strong> Consommer écoresponsable, ce n'est pas une tendance. C'est choisir de préserver la nature,
                             protéger notre environnement et laisser une empreinte lumineuse pour les générations futures.
                             100% PIÈCES UNIQUES | 4 UNIVERS DE CRÉATION | BÉNIN & AU-DELÀ
                         </p>
@@ -130,7 +130,7 @@
                                 <div class="stat-lab">Bénin & au-delà</div>
                             </div>
                             <div class="stat-card">
-                                <img src="{{ asset('images/logo2.png') }}" alt="Écoresponsable" style="height: 100px; background:black" />
+                                <img src="{{ asset('images/log1.jpg') }}" alt="Écoresponsable"  />
                             </div>
                         </div>
                     </div>

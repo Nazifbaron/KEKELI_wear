@@ -19,6 +19,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/boutique', [\App\Http\Controllers\ProductController::class, 'index'])->name('boutique');
 Route::get('/produit/{slug}', [\App\Http\Controllers\ProductController::class, 'show'])->name('product.show');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::view('/view', 'view')->name('view');
 /*
 |--------------------------------------------------------------------------

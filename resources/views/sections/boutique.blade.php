@@ -8,7 +8,7 @@
       <div class="filter-bar" id="filter-bar">
         <button class="filter-btn active" onclick="filterByCategory('all', this)">Tout</button>
         @foreach($categories as $cat)
-          <button class="filter-btn" onclick="filterByCategory('{{ $cat->slug }}', this)">
+          <button class="filter-btn" onclick="filterByCategory('{{ $cat->slug }}', this)" style="border-radius: 20px;">
             {{ $cat->nom }}
           </button>
         @endforeach

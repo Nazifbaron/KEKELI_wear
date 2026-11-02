@@ -87,7 +87,7 @@
                         Votre nom *
                     </label>
                     <input class="form-input" id="buyer-name" type="text"
-                           placeholder="Votre nom complet" />
+                           placeholder="Votre nom complet" style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:100%;font-family:inherit; color:var(--mid)"/>
                 </div>
                 <div>
                     <label style="font-size:10px;font-weight:700;text-transform:uppercase;
@@ -95,7 +95,7 @@
                         Votre WhatsApp *
                     </label>
                     <input class="form-input" id="buyer-phone" type="tel"
-                           placeholder="+229 01..." />
+                           placeholder="+229 01..." style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:100%;font-family:inherit; color:var(--mid)"/>
                 </div>
             </div>
             <div>
@@ -104,7 +104,7 @@
                     Email (pour recevoir le bon)
                 </label>
                 <input class="form-input" id="buyer-email" type="email"
-                       placeholder="votre@email.com" />
+                       placeholder="votre@email.com" style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:100%;font-family:inherit; color:var(--mid)"/>
             </div>
         </div>
 
@@ -121,7 +121,7 @@
                         Nom du bénéficiaire
                     </label>
                     <input class="form-input" id="recipient-name" type="text"
-                           placeholder="Nom de la personne à qui vous offrez" />
+                           placeholder="Nom de la personne à qui vous offrez" style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:100%;font-family:inherit; color:var(--mid)"/>
                 </div>
                 <div>
                     <label style="font-size:10px;font-weight:700;text-transform:uppercase;
@@ -129,7 +129,7 @@
                         Son WhatsApp
                     </label>
                     <input class="form-input" id="recipient-phone" type="tel"
-                           placeholder="+229 01..." />
+                           placeholder="+229 01..." style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:100%;font-family:inherit; color:var(--mid)"/>
                 </div>
             </div>
         </details>

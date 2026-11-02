@@ -33,8 +33,8 @@
     {{-- Témoignages clients --}}
     @include('sections.reviews', ['reviews' => $reviews, 'avgRating' => $avgRating])
 
-    {{-- Contact --}}
-    @include('sections.contact')
+    {{-- Contact
+    @include('sections.contact')--}}
 
 @endsection
 

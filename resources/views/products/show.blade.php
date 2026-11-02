@@ -195,37 +195,45 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Nom complet *</label>
-                    <input class="form-input" id="pm-name" type="text" placeholder="Votre nom" />
+                    <input class="form-input" id="pm-name" type="text" placeholder="Votre nom"
+                    style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:100%;font-family:inherit; color:var(--mid)"/>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Numéro WhatsApp *</label>
-                    <input class="form-input" id="pm-whatsapp" type="tel" placeholder="+229 01..." />
+                    <input class="form-input" id="pm-whatsapp" type="tel" placeholder="+229 01..."
+                    style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:100%;font-family:inherit; color:var(--mid)"    />
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Tour de poitrine (cm)</label>
-                    <input class="form-input" id="pm-chest" type="number" placeholder="Ex: 90" />
+                    <input class="form-input" id="pm-chest" type="number" placeholder="Ex: 90"
+                    style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:50%;font-family:inherit; color:var(--mid)"/>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Tour de taille (cm)</label>
-                    <input class="form-input" id="pm-waist" type="number" placeholder="Ex: 72" />
+                    <input class="form-input" id="pm-waist" type="number" placeholder="Ex: 72"
+                    style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:50%;font-family:inherit; color:var(--mid)"/>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Tour de hanches (cm)</label>
-                    <input class="form-input" id="pm-hips" type="number" placeholder="Ex: 98" />
+                    <input class="form-input" id="pm-hips" type="number" placeholder="Ex: 98"
+                    style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:50%;font-family:inherit; color:var(--mid)"/>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Hauteur (cm)</label>
-                    <input class="form-input" id="pm-height" type="number" placeholder="Ex: 165" />
+                    <input class="form-input" id="pm-height" type="number" placeholder="Ex: 165"
+                    style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:50%;font-family:inherit; color:var(--mid)"  />
                 </div>
             </div>
             <div class="form-group" style="margin-bottom:20px">
                 <label class="form-label">Notes ou demandes particulières</label>
                 <textarea class="form-input" id="pm-notes" rows="2"
-                          placeholder="Ex: longueur midi, couleur préférée..."></textarea>
+                          placeholder="Ex: longueur midi, couleur préférée..."
+                          style="background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:8px 12px;font-size:13px;width:100%;font-family:inherit; color:var(--mid)">
+                        </textarea>
             </div>
             <div style="display:flex;gap:12px;flex-wrap:wrap">
                 <button class="btn-gold" onclick="sendProductMorpho()">📱 Envoyer sur WhatsApp</button>

@@ -634,8 +634,8 @@ function sendContact() {
     var email   = document.getElementById('c-email')?.value.trim();
     var message = document.getElementById('c-message')?.value.trim();
 
-    if (!name || !message) {
-        showToast('⚠ Nom et message requis.', 'err');
+    if (!name || !phone || !message ) {
+        showToast('⚠ Nom, téléphone et message requis.', 'err');
         return;
     }
 

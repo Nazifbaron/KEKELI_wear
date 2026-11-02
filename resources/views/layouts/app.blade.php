@@ -18,7 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
     @stack('styles')
 </head>
-<body>
+<body @class(['nav-solid-page' => request()->routeIs('boutique')])>
 
     {{-- ===== NAVIGATION FIXE ===== --}}
     @include('components.navbar')

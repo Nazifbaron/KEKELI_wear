@@ -18,14 +18,14 @@ class HomeController extends Controller
             ->get();
         /*
         |----------------------------------------------------------
-        | HOME — Max 12 produits affichés
+        | HOME — Max 8 produits affichés
         | Les autres sont accessibles via /boutique
         |----------------------------------------------------------
         */
         $products = Product::active()
             ->with(['category', 'extraImages'])
             ->orderByDesc('heart_score')
-            ->take(12)
+            ->take(8)
             ->get();
 
         /* Total réel pour le bouton "Voir tous les X produits" */
@@ -62,5 +62,10 @@ class HomeController extends Controller
     public function about()
     {
         return view('about');
+    }
+
+    public function contact()
+    {
+        return view('contact');
     }
 }

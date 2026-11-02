@@ -39,8 +39,8 @@
             <a href="#featured"    class="nav-link">Tendances</a>
             <a href="#shop"        class="nav-link">Boutique</a>
             <a href="#morphology"  class="nav-link">Espace client</a>
-            <a href="#reviews"     class="nav-link">Avis</a>
-            <a href="#contact"     class="nav-link">Contact</a>
+            {{--<a href="#reviews"     class="nav-link">Avis</a>--}}
+            <a href="/contact"     class="nav-link">Contact</a>
             <a href="{{ route('bon') }}"
                 class="nav-link nav-link-gift"
                 style="display:inline-flex;align-items:center;gap:6px;

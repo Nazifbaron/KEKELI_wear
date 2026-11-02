@@ -34,7 +34,12 @@ class ProductController extends Controller
             );
         }
 
-        $products = $query->orderByDesc('heart_score')->paginate(24)->withQueryString();
+        $products = $query
+            ->orderBy(Category::select('order')
+                ->whereColumn('categories.id', 'products.category_id'))
+            ->orderByDesc('heart_score')
+            ->paginate(24)
+            ->withQueryString();
 
         $currentCat = $request->cat;
 
