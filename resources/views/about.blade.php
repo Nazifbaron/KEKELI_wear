@@ -6,7 +6,7 @@
     {{-- CSRF token lu par kekeli.js pour toutes les requêtes POST --}}
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>KEKELI WEAR - À propos</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('images/icon-rounded.png') }}?v={{ filemtime(public_path('images/icon-rounded.png')) }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
@@ -129,10 +129,14 @@
                                 <div class="stat-num">🌍</div>
                                 <div class="stat-lab">Bénin & au-delà</div>
                             </div>
-                            <div class="stat-card">
-                                <img src="{{ asset('images/log1.jpg') }}" alt="Écoresponsable"  />
-                            </div>
                         </div>
+                         <div style="margin-top: 10px;  display: flex; justify-content: between; align-items: center; gap: 20px; ">
+                            <img src="{{ asset('images/log1.png') }}" alt="Écoresponsable" style="max-width: 20%; height: auto;" />
+                            <p>Ce site de mode est propulsé et encadré par <strong>KEKELI Corporation</strong></p>
+
+                        </div>
+                        <div style="margin-top: 24px; text-align:center">
+                                                            </div>
                     </div>
 
                 </div>

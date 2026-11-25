@@ -8,15 +8,13 @@
 ============================================================ --}}
 <section id="morphology">
     <div class="container">
-
-        <div class="sec-label">Espace personnel</div>
-        <div class="sec-title" style="font-size:28px;color:#fff">Mon profil morphologique</div>
-        <div class="divider"></div>
-        <p class="sec-sub" style="margin-bottom:40px;color:#fff">
-            Identifiez votre morphologie pour recevoir des conseils de style personnalisés,
-            puis renseignez vos mesures pour commander en toute confiance.
-        </p>
-
+        <div class="sec-sub" style="margin-bottom:20px;color:#fff; margin:auto; max-width:600px; text-align:center; margin-bottom:40px">
+            <div class="sec-label" style="margin-bottom:20px;">Espace personnel</div>
+            <div class="sec-title" style="font-size:28px;color:#fff; margin-bottom:20px;">Mon profil morphologique</div>
+            <!-- <div class="divider"></div> -->
+              <strong>Bienvenue dans votre espace personnel !</strong>
+                Ici, vous pouvez identifier votre morphologie et renseigner vos mensurations pour recevoir des conseils de style personnalisés et commander en toute confiance.
+        </div>
         <div class="morpho-grid">
             {{-- ===== COLONNE GAUCHE : Sélection morphologie ===== --}}
             <div>

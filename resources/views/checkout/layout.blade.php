@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('title', 'Commande') — KEKELI WEAR</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/icon-rounded.png') }}?v={{ filemtime(public_path('images/icon-rounded.png')) }}" />
     <link rel="stylesheet" href="{{ asset('css/kekeli.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/checkout.css') }}" />
     @stack('styles')

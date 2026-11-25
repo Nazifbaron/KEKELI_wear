@@ -1,0 +1,10 @@
+/* Fond média des slides hero (image ou vidéo) */
+.hero-slide { position: relative; overflow: hidden; }
+.hero-media {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: center; z-index: 0;
+}
+.hero-overlay { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+/* Le contenu texte doit rester au-dessus */
+.hero-slide .hero-content { position: relative; z-index: 2; }
+@media (prefers-reduced-motion: reduce) { .hero-video { display: none; } }

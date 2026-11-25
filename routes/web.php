@@ -137,11 +137,12 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(func
     Route::delete('products/{product}',               [AdminController::class, 'destroyProduct'])->name('products.destroy');
 
     // Hero slides — CRUD complet (ajouter update qui manquait)
-    Route::get   ('hero-slides',                   [\App\Http\Controllers\Admin\HeroSlideController::class, 'index'])  ->name('hero-slides');
-    Route::post  ('hero-slides',                   [\App\Http\Controllers\Admin\HeroSlideController::class, 'store'])  ->name('hero-slides.store');
-    Route::put   ('hero-slides/{slide}',           [\App\Http\Controllers\Admin\HeroSlideController::class, 'update']) ->name('hero-slides.update');
-    Route::patch ('hero-slides/{slide}/toggle',    [\App\Http\Controllers\Admin\HeroSlideController::class, 'toggle']) ->name('hero-slides.toggle');
-    Route::delete('hero-slides/{slide}',           [\App\Http\Controllers\Admin\HeroSlideController::class, 'destroy'])->name('hero-slides.destroy');
+    Route::post  ('hero-slides/reorder',        [\App\Http\Controllers\Admin\HeroSlideController::class, 'reorder'])->name('hero-slides.reorder');
+    Route::get   ('hero-slides',                [\App\Http\Controllers\Admin\HeroSlideController::class, 'index'])  ->name('hero-slides');
+    Route::post  ('hero-slides',                [\App\Http\Controllers\Admin\HeroSlideController::class, 'store'])  ->name('hero-slides.store');
+    Route::put   ('hero-slides/{slide}',        [\App\Http\Controllers\Admin\HeroSlideController::class, 'update']) ->name('hero-slides.update');
+    Route::patch ('hero-slides/{slide}/toggle', [\App\Http\Controllers\Admin\HeroSlideController::class, 'toggle']) ->name('hero-slides.toggle');
+    Route::delete('hero-slides/{slide}',        [\App\Http\Controllers\Admin\HeroSlideController::class, 'destroy'])->name('hero-slides.destroy');
 
     // Commandes
     Route::get  ('orders',                            [AdminController::class, 'orders'])->name('orders');

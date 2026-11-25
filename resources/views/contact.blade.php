@@ -7,10 +7,11 @@
     {{-- CSRF token lu par kekeli.js pour toutes les requêtes POST --}}
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>KEKELI WEAR - Contact</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('images/icon-rounded.png') }}?v={{ filemtime(public_path('images/icon-rounded.png')) }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <link rel="stylesheet" href="{{ asset('css/kekeli.css') }}" />
     @stack('styles')
 </head>
@@ -83,9 +84,11 @@
                         <h2 data-v-5ebeeac8="" class="ct__bt">Suivez-nous</h2>
                         <p data-v-5ebeeac8="" class="ct__line ct__muted">Retrouvez nos nouveautés et coulisses sur les réseaux.</p>
                         <div class="ct__social" data-v-5ebeeac8>
-                            <a data-v-5ebeeac8 href="https://facebook.com/kekeliwear229" target="_blank" rel="noopener" title="Facebook">f</a>
-                            <a data-v-5ebeeac8 href="https://wa.me/{{ config('kekeli.whatsapp') }}" target="_blank" rel="noopener" title="WhatsApp">W</a>
-                            <a data-v-5ebeeac8 href="https://tiktok.com/@kekeliwear229" target="_blank" rel="noopener" title="TikTok">T</a>
+                            <a data-v-5ebeeac8 href="https://facebook.com/kekeliwear229" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+                            <a data-v-5ebeeac8 href="https://wa.me/{{ config('kekeli.whatsapp') }}" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+                            <a data-v-5ebeeac8 href="https://tiktok.com/@kekeliwear229" target="_blank" rel="noopener noreferrer" title="TikTok" aria-label="TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></a>
+                            <a data-v-5ebeeac8 href="https://www.instagram.com/kekeliwear229/" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                            <a data-v-5ebeeac8 href="https://www.youtube.com/@kekeliwear229" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
                         </div>
 
                     </article>
@@ -175,9 +178,9 @@
                             referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
                     </div>
-                    <a class="contact-map-link" href="https://www.google.com/maps/search/?api=1&amp;query=Pk11%2C%20S%C3%A9yiv%C3%A8%2C%20S%C3%A8m%C3%A9-Kpodji%2C%20Cotonou%2C%20B%C3%A9nin" target="_blank" rel="noopener">
+                    <!--<a class="contact-map-link" href="https://www.google.com/maps/search/?api=1&amp;query=Pk11%2C%20S%C3%A9yiv%C3%A8%2C%20S%C3%A8m%C3%A9-Kpodji%2C%20Cotonou%2C%20B%C3%A9nin" target="_blank" rel="noopener">
                         Ouvrir l'itinéraire sur Google Maps ↗
-                    </a>
+                    </a>-->
                 </div>
             </div>
             </div>

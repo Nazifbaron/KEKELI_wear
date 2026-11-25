@@ -8,7 +8,7 @@
     <div class="container">
 
         <div class="sec-label">Avis clients</div>
-        <div class="sec-title" style="font-size:clamp(32px,4.5vw,52px);margin-bottom:16px; font-family: 'Fraunces', serif">
+        <div class="sec-title" style="font-size:clamp(32px,4.5vw,52px);margin-bottom:16px; font-family: 'Arial Rounded MT Bold', 'Nunito', sans-serif">
             Elles ont choisi KEKELI <br> Wear, elles en parlent
         </div>
 

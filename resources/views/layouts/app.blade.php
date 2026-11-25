@@ -6,8 +6,8 @@
     {{-- CSRF token lu par kekeli.js pour toutes les requêtes POST --}}
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="catalogue-url" content="{{ route('boutique') }}" />
-    <title>KEKELI WEAR — Une lumière pour la mode au féminin</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}" />
+    <title>KEKELI WEAR - Une lumière pour la mode au féminin</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/icon-rounded.png') }}?v={{ filemtime(public_path('images/icon-rounded.png')) }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     {{-- Prioriser les feuilles locales : elles contiennent toute la mise en page. --}}
@@ -15,7 +15,8 @@
     <link rel="stylesheet" fetchpriority="high" href="{{ asset('css/product-detail.css') }}?v={{ filemtime(public_path('css/product-detail.css')) }}" />
     <link rel="stylesheet" fetchpriority="high" href="{{ asset('css/promotions.css') }}?v={{ filemtime(public_path('css/promotions.css')) }}" />
     {{-- La police distante est secondaire : fallback immédiat via les piles CSS. --}}
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&family=Dancing+Script:wght@700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
     @stack('styles')
 </head>
 <body @class(['nav-solid-page' => request()->routeIs('boutique')])>

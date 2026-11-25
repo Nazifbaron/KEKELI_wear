@@ -4,11 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>KEKELI Admin — @yield('title','Dashboard')</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}" />
+    <title>KEKELI Admin - @yield('title','Dashboard')</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/icon-rounded.png') }}?v={{ filemtime(public_path('images/icon-rounded.png')) }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}" />
+
     @stack('styles')
 </head>
 <body class="admin-body">
@@ -19,8 +20,8 @@
         {{-- Logo --}}
         <div class="sidebar-logo">
             <img src="{{ asset('images/icon.png') }}"
-                 alt="K" style="height:32px;width:auto" />
-            <span>Kekeli <em>Admin</em></span>
+                 alt="K" style="height:32px;width:auto; border-radius: 50%;" />
+            <span>Kekeli Admin</span>
         </div>
 
         {{-- Navigation --}}
